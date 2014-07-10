@@ -6,10 +6,39 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXFileReference section */
+		C9D4279A196EE768001E204D /* gvspcPix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcPix.cpp; sourceTree = "<group>"; };
+		C9D4279B196EE768001E204D /* gvspcSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcSensor.cpp; sourceTree = "<group>"; };
+		C9D4279C196EE768001E204D /* gvspcSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcSensor.h; sourceTree = "<group>"; };
+		C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cppgvspc_gen_p2vm.cpp; sourceTree = "<group>"; };
+		C9D4279E196EE768001E204D /* gvspcPix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcPix.h; sourceTree = "<group>"; };
+		C9D4279F196EE768001E204D /* gvspcCsv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gvspcCsv.c; sourceTree = "<group>"; };
+		C9D427A0196EE768001E204D /* gvspcConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcConst.h; sourceTree = "<group>"; };
+		C9D427A1196EE768001E204D /* gvspcCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv.h; sourceTree = "<group>"; };
+		C9D427A2196EE768001E204D /* gvspcErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcErrorCode.h; sourceTree = "<group>"; };
+		C9D427A3196EE7CE001E204D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		C9D427A4196EF26A001E204D /* test.csh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.csh; path = test.csh; sourceTree = "<group>"; };
+		C9D427A6196F1302001E204D /* gvspcFifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcFifo.h; sourceTree = "<group>"; wrapsLines = 0; };
+		C9D427A7196F243B001E204D /* gvspcFifo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcFifo.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		C9D4278F196EE6EA001E204D = {
 			isa = PBXGroup;
 			children = (
+				C9D427A6196F1302001E204D /* gvspcFifo.h */,
+				C9D427A7196F243B001E204D /* gvspcFifo.cpp */,
+				C9D4279A196EE768001E204D /* gvspcPix.cpp */,
+				C9D4279B196EE768001E204D /* gvspcSensor.cpp */,
+				C9D427A4196EF26A001E204D /* test.csh */,
+				C9D4279C196EE768001E204D /* gvspcSensor.h */,
+				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
+				C9D427A3196EE7CE001E204D /* Makefile */,
+				C9D4279E196EE768001E204D /* gvspcPix.h */,
+				C9D4279F196EE768001E204D /* gvspcCsv.c */,
+				C9D427A0196EE768001E204D /* gvspcConst.h */,
+				C9D427A1196EE768001E204D /* gvspcCsv.h */,
+				C9D427A2196EE768001E204D /* gvspcErrorCode.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -36,7 +65,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = mpe;
+				ORGANIZATIONNAME = MPE;
 			};
 			buildConfigurationList = C9D42793196EE6EA001E204D /* Build configuration list for PBXProject "cppgvspc" */;
 			compatibilityVersion = "Xcode 3.2";
