@@ -9,10 +9,12 @@
 #ifndef cppgvspc_gvspcFifo_h
 #define cppgvspc_gvspcFifo_h
 
+#include <deque>
+
 template <typename T>
 class gvspcFifo
 {
-	std::vector<T> q;
+	std::deque<T> q;
 	int size_limit;
 
 public:
@@ -21,11 +23,14 @@ public:
 	~gvspcFifo();
 	
 	void limit(int s);
-	void add(T qi);
+	void add(const T& qi);
+	void clear();
 	int size();
 	int isEmpty();
 	const T& operator[](int i) const;
 	const T& last() const;
+	T mean() const;
+	T var() const;
 	
 };
 
@@ -39,7 +44,7 @@ template <typename T>
 gvspcFifo<T>::gvspcFifo(int s)
 {
 	limit(s);
-	std::cout << "gvspcFifo of type " << typeid(T).name() << " created." << std::endl;
+	std::cout << "1 gvspcFifo of type " << typeid(T).name() << " created." << std::endl;
 }
 
 template <typename T>
@@ -52,12 +57,15 @@ template <typename T>
 void gvspcFifo<T>::limit(int s) { size_limit = s; }
 
 template <typename T>
-void gvspcFifo<T>::add(T qi)
+void gvspcFifo<T>::add(const T& qi)
 {
-	if (q.size() == size_limit) q.erase(q.begin());
+	if (q.size() == size_limit) { q.pop_front(); }
 	q.push_back(qi);
 	std::cout << "new size = " << q.size() << std::endl;
 }
+
+template <typename T>
+void gvspcFifo<T>::clear() { q.clear(); }
 
 template <typename T>
 int gvspcFifo<T>::size() { return q.size(); }
@@ -70,5 +78,24 @@ const T& gvspcFifo<T>::operator[](int i) const { return q[i]; }
 
 template <typename T>
 const T& gvspcFifo<T>::last() const { return q.back(); }
+
+template <typename T>
+T gvspcFifo<T>::mean() const
+{
+	T mu;
+	for (int i=0; i<q.size(); i++) mu = (i == 0) ? q[i] : mu + q[i];
+	mu /= q.size();
+	return mu;
+}
+
+template <typename T>
+T gvspcFifo<T>::var() const
+{
+	T mu = mean();
+	T var;
+	for (int i=0; i<q.size(); i++) var = (i == 0) ? (q[i]-mu)*(q[i]-mu) : var + (q[i]-mu)*(q[i]-mu);
+	var /= q.size()-1;
+	return var;
+}
 
 #endif

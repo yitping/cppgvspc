@@ -4,6 +4,7 @@
 #include <string.h>
 #include "gvspcPix.h"
 #include "gvspcFifo.h"
+#include "gvspcV2PM.h"
 #include "gvspcSensor.h"
 #include "gvspcCsv.h"
 
@@ -118,7 +119,7 @@ int main(int argc, char **argv)
 		gvspcSensor sensor;
 		sensor.load_pixel_indices(file_index);
 		
-		if (!sensor.isNull())
+		if (!sensor.has_indices())
 		{
 			cpl_msg_info(cpl_func, "reading dark fits...");
 			for (i=0; i<num_dark; i++)
@@ -133,7 +134,67 @@ int main(int argc, char **argv)
 				sensor.process_image(image, 0);
 				cpl_image_delete(image);
 			}
-//			sensor.save_dark();
+			sensor.save_dark();
+			
+			cpl_msg_info(cpl_func, "reading tel1 fits...");
+			for (i=0; i<num_tel1; i++)
+			{
+				cpl_msg_info(cpl_func, "loading %s", files_tel1[i]);
+				image = cpl_image_load(files_tel1[i], CPL_TYPE_DOUBLE, 0, 0);
+				if (image == NULL)
+				{
+					std::cerr << "image is null" << std::endl;
+					continue;
+				}
+				sensor.process_image(image, 1);
+				cpl_image_delete(image);
+			}
+			sensor.save_phot(1);
+			
+			cpl_msg_info(cpl_func, "reading tel2 fits...");
+			for (i=0; i<num_tel2; i++)
+			{
+				cpl_msg_info(cpl_func, "loading %s", files_tel2[i]);
+				image = cpl_image_load(files_tel2[i], CPL_TYPE_DOUBLE, 0, 0);
+				if (image == NULL)
+				{
+					std::cerr << "image is null" << std::endl;
+					continue;
+				}
+				sensor.process_image(image, 1);
+				cpl_image_delete(image);
+			}
+			sensor.save_phot(2);
+			
+			cpl_msg_info(cpl_func, "reading tel3 fits...");
+			for (i=0; i<num_tel3; i++)
+			{
+				cpl_msg_info(cpl_func, "loading %s", files_tel3[i]);
+				image = cpl_image_load(files_tel3[i], CPL_TYPE_DOUBLE, 0, 0);
+				if (image == NULL)
+				{
+					std::cerr << "image is null" << std::endl;
+					continue;
+				}
+				sensor.process_image(image, 1);
+				cpl_image_delete(image);
+			}
+			sensor.save_phot(3);
+			
+			cpl_msg_info(cpl_func, "reading tel4 fits...");
+			for (i=0; i<num_tel4; i++)
+			{
+				cpl_msg_info(cpl_func, "loading %s", files_tel4[i]);
+				image = cpl_image_load(files_tel4[i], CPL_TYPE_DOUBLE, 0, 0);
+				if (image == NULL)
+				{
+					std::cerr << "image is null" << std::endl;
+					continue;
+				}
+				sensor.process_image(image, 1);
+				cpl_image_delete(image);
+			}
+			sensor.save_phot(4);
 			
 			long x;
 			int k=4, j=1800, p=2;
@@ -143,26 +204,54 @@ int main(int argc, char **argv)
 			std::cout << "Hello, world!" << std::endl;
 			std::cout << "tell me more!" << std::endl;
 			std::cout << "x = " << x << std::endl;
-			
-			sensor.dump_an_index();
-			sensor.dump_a_pix();
 
+			sensor.set_default_ps();
+			sensor.compute_v2pms();
+			sensor.save_v2pms_to_file(file_p2vm);
+			sensor.dump_an_index();
+//			sensor.dump_a_pix();
 			
-			gvspcFifo<int> bint(5);
-			gvspcFifo<double> bdbl(10);
-			
-			bint.add(6); bint.add(1); bint.add(2); bint.add(6); bint.add(7); bint.add(10); bint.add(3);
-			bdbl.add(6.3);
-			
-			i = 2; std::cout << "bint[" << i << "] = " << bint[i] << std::endl;
-			i = 0; std::cout << "bdbl[" << i << "] = " << bdbl[i] << std::endl;
-			
-			for (i=0; i<bint.size(); i++)
-			{
-				std::cout << ((i == 0) ? "" : ", ") << bint[i];
-			}
-			std::cout << std::endl;
 		}
+		
+		gvspcFifo<int> bint(5);
+		gvspcFifo<double> bdbl(10);
+		
+		bint.add(6); bint.add(1); bint.add(2); bint.add(6); bint.add(7); bint.add(10); bint.add(3);
+		bdbl.add(6.3); bdbl.add(2.4); bdbl.add(5.1); bdbl.add(3.9); bdbl.add(4.8);
+		
+		i = 2; std::cout << "bint[" << i << "] = " << bint[i] << std::endl;
+		i = 0; std::cout << "bdbl[" << i << "] = " << bdbl[i] << std::endl;
+		std::cout << "computing mean..." << std::endl;
+		std::cout << "mean bint = " << bint.mean() << "; var bint = " << bint.var() << std::endl;
+		std::cout << "done mean..." << std::endl;
+		std::cout << "computing mean..." << std::endl;
+		std::cout << "mean bdbl = " << bdbl.mean() << "; var bint = " << bdbl.var() << std::endl;
+		std::cout << "done mean..." << std::endl;
+		
+		for (i=0; i<bint.size(); i++)
+		{
+			std::cout << ((i == 0) ? "" : ", ") << bint[i];
+		}
+		std::cout << std::endl;
+		for (i=0; i<bdbl.size(); i++)
+		{
+			std::cout << ((i == 0) ? "" : ", ") << bdbl[i];
+		}
+		std::cout << std::endl;
+		
+		gvspcFifo<gvspcPix> fifo_phot(4);
+		for (i=0; i<10; i++)
+		{
+			std::cout << "creating..." << std::endl;
+			gvspcPix new_pix(10,2);
+			std::cout << "done..." << std::endl;
+			fifo_phot.add(new_pix);
+			std::cout << "leaving..." << std::endl;
+		}
+		std::cout << "computing mean..." << std::endl;
+		gvspcPix mu = fifo_phot.mean();
+		std::cout << "done mean..." << std::endl;
+		
 	}
 	
 	if (!cpl_memory_is_empty()) cpl_msg_error(cpl_func, "memory is not empty.");

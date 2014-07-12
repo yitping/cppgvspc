@@ -9,7 +9,7 @@ MODULES = cppgvspc_gen_p2vm
 
 all: $(MODULES)
 
-cppgvspc_gen_p2vm: cppgvspc_gen_p2vm.o gvspcSensor.o gvspcPix.o gvspcCsv.o
+cppgvspc_gen_p2vm: cppgvspc_gen_p2vm.o gvspcSensor.o gvspcPix.o gvspcCsv.o gvspcV2PM.o
 	$(CXX) $(LDFLAGS) $^ -o $@
 
 %.o: %.c $(INCLUDES)

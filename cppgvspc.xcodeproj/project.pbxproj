@@ -17,20 +17,22 @@
 		C9D427A1196EE768001E204D /* gvspcCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv.h; sourceTree = "<group>"; };
 		C9D427A2196EE768001E204D /* gvspcErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcErrorCode.h; sourceTree = "<group>"; };
 		C9D427A3196EE7CE001E204D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		C9D427A4196EF26A001E204D /* test.csh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.csh; path = test.csh; sourceTree = "<group>"; };
 		C9D427A6196F1302001E204D /* gvspcFifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcFifo.h; sourceTree = "<group>"; wrapsLines = 0; };
 		C9D427A7196F243B001E204D /* gvspcFifo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcFifo.cpp; sourceTree = "<group>"; };
+		C9D427A8196FE790001E204D /* gvspcV2PM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcV2PM.h; sourceTree = "<group>"; };
+		C9D427A9196FF054001E204D /* gvspcV2PM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcV2PM.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		C9D4278F196EE6EA001E204D = {
 			isa = PBXGroup;
 			children = (
+				C9D427A8196FE790001E204D /* gvspcV2PM.h */,
+				C9D427A9196FF054001E204D /* gvspcV2PM.cpp */,
 				C9D427A6196F1302001E204D /* gvspcFifo.h */,
 				C9D427A7196F243B001E204D /* gvspcFifo.cpp */,
 				C9D4279A196EE768001E204D /* gvspcPix.cpp */,
 				C9D4279B196EE768001E204D /* gvspcSensor.cpp */,
-				C9D427A4196EF26A001E204D /* test.csh */,
 				C9D4279C196EE768001E204D /* gvspcSensor.h */,
 				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
 				C9D427A3196EE7CE001E204D /* Makefile */,

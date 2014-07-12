@@ -15,6 +15,7 @@ class gvspcPix
 	gvspcPix();
 	gvspcPix(int n_ch, int n_pl);
 	gvspcPix(const gvspcPix& other_pix);
+	gvspcPix(const gvspcPix& other_pix, int j, int p);
 	~gvspcPix();
 
 	// prepare internal array
@@ -23,15 +24,21 @@ class gvspcPix
 	// operators
 	gvspcPix& operator=(const gvspcPix& other_pix);
 	double operator[](long i);
-	double operator[](long i) const;
 	gvspcPix operator+(const gvspcPix& B) const;
+	gvspcPix operator-(const gvspcPix& B) const;
 	gvspcPix operator*(double b) const;
 	gvspcPix operator*(const gvspcPix& B) const;
 	gvspcPix operator/(double b) const;
 	gvspcPix operator/(const gvspcPix& B) const;
+	gvspcPix& operator*=(double b);
+	gvspcPix& operator*=(const gvspcPix& B);
+	gvspcPix& operator/=(double b);
+	gvspcPix& operator/=(const gvspcPix& B);
 
 	// get essential array size
 	int isNull() const;
+	int num_ph() const;
+	int num_bl() const;
 	int num_ch() const;
 	int num_pl() const;
 	long  size() const;
@@ -41,16 +48,24 @@ class gvspcPix
 	int set(double val, int k, int i, int j, int p);
 
 	// get the value of each pixel
-	double get(int k, int i, int j, int p) const;
-	double get(long i) const;
+	double get(int k, int i, int j, int p);
+	double get(long i);
 
 	// sum over v and y
 	double sum();
+	
+	// debug
+	int save_to_file(const char *fname, const char *label, int append);
+	int save_to_file(std::string& fname, std::string& label, int append);
 
 	private:
-	void init(int n_ch=0, int n_pl=0);
+	void init(int n_ch, int n_pl);
+	void init(int n_ph, int n_bl, int n_ch, int n_pl);
 	void copy(const gvspcPix& other_pix);
+	void copy(const gvspcPix& other_pix, int j, int p);
 	long convert_img_indices(int l, int j, int p, int isYjunc=0);
+	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0) const;
+	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0);
 
 };
 
