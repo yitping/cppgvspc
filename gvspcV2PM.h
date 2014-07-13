@@ -20,19 +20,23 @@ class gvspcV2PM
 	
 public:
 	gvspcV2PM();
+	gvspcV2PM(const gvspcV2PM& B);
 	// this can be inefficient because not all elements in this huge gvspcPix are used
 	gvspcV2PM(std::vector<gvspcPix>& phot,
 						double sum_phot[],
 						std::vector<int> t[],
 						double a[]);
+	gvspcV2PM(const std::vector<std::vector<double> >& BM);
 	~gvspcV2PM();
 	
 	int set(std::vector<gvspcPix>& phot,
 					double sum_phot[],
 					std::vector<int> t[],
 					double a[]);
-	int set(std::vector<std::vector<double> >& M);
+	int set(const std::vector<std::vector<double> >& BM);
 	const std::vector<std::vector<double> >& get() const;
+	
+	gvspcV2PM& operator=(const gvspcV2PM& B);
 	
 	int nrow();
 	int ncol();
@@ -41,6 +45,7 @@ public:
 	
 private:
 	void init();
+	void copy(const gvspcV2PM& B);
 	double cosd(double d);
 	double sind(double d);
 	

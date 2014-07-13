@@ -12,15 +12,17 @@
 		C9D4279C196EE768001E204D /* gvspcSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcSensor.h; sourceTree = "<group>"; };
 		C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cppgvspc_gen_p2vm.cpp; sourceTree = "<group>"; };
 		C9D4279E196EE768001E204D /* gvspcPix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcPix.h; sourceTree = "<group>"; };
-		C9D4279F196EE768001E204D /* gvspcCsv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gvspcCsv.c; sourceTree = "<group>"; };
+		C9D4279F196EE768001E204D /* gvspcCsv_c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gvspcCsv_c.c; sourceTree = "<group>"; };
 		C9D427A0196EE768001E204D /* gvspcConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcConst.h; sourceTree = "<group>"; };
-		C9D427A1196EE768001E204D /* gvspcCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv.h; sourceTree = "<group>"; };
+		C9D427A1196EE768001E204D /* gvspcCsv_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv_c.h; sourceTree = "<group>"; };
 		C9D427A2196EE768001E204D /* gvspcErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcErrorCode.h; sourceTree = "<group>"; };
 		C9D427A3196EE7CE001E204D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C9D427A6196F1302001E204D /* gvspcFifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcFifo.h; sourceTree = "<group>"; wrapsLines = 0; };
 		C9D427A7196F243B001E204D /* gvspcFifo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcFifo.cpp; sourceTree = "<group>"; };
 		C9D427A8196FE790001E204D /* gvspcV2PM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcV2PM.h; sourceTree = "<group>"; };
 		C9D427A9196FF054001E204D /* gvspcV2PM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcV2PM.cpp; sourceTree = "<group>"; };
+		C9D427AA19727928001E204D /* gvspcCsv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv.h; sourceTree = "<group>"; };
+		C9D427AB197281A8001E204D /* gvspcCsv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcCsv.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -33,13 +35,15 @@
 				C9D427A7196F243B001E204D /* gvspcFifo.cpp */,
 				C9D4279A196EE768001E204D /* gvspcPix.cpp */,
 				C9D4279B196EE768001E204D /* gvspcSensor.cpp */,
+				C9D427AA19727928001E204D /* gvspcCsv.h */,
+				C9D427AB197281A8001E204D /* gvspcCsv.cpp */,
 				C9D4279C196EE768001E204D /* gvspcSensor.h */,
 				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
 				C9D427A3196EE7CE001E204D /* Makefile */,
 				C9D4279E196EE768001E204D /* gvspcPix.h */,
-				C9D4279F196EE768001E204D /* gvspcCsv.c */,
+				C9D4279F196EE768001E204D /* gvspcCsv_c.c */,
 				C9D427A0196EE768001E204D /* gvspcConst.h */,
-				C9D427A1196EE768001E204D /* gvspcCsv.h */,
+				C9D427A1196EE768001E204D /* gvspcCsv_c.h */,
 				C9D427A2196EE768001E204D /* gvspcErrorCode.h */,
 			);
 			sourceTree = "<group>";

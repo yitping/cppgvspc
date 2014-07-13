@@ -1,7 +1,7 @@
 /*
  */
 
-#include "gvspcCsv.h"
+#include "gvspcCsv_c.h"
 
 /*
  * Read matrices/arrays stored in csv format into memory (helper function)

@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 		gvspcSensor sensor;
 		sensor.load_pixel_indices(file_index);
 		
-		if (!sensor.has_indices())
+		if (sensor.has_indices())
 		{
 			cpl_msg_info(cpl_func, "reading dark fits...");
 			for (i=0; i<num_dark; i++)
@@ -206,8 +206,9 @@ int main(int argc, char **argv)
 			std::cout << "x = " << x << std::endl;
 
 			sensor.set_default_ps();
-			sensor.compute_v2pms();
-			sensor.save_v2pms_to_file(file_p2vm);
+			sensor.load_v2pms("v2pms.csv");
+//			sensor.compute_v2pms();
+			sensor.save_v2pms(file_p2vm);
 			sensor.dump_an_index();
 //			sensor.dump_a_pix();
 			
@@ -251,6 +252,35 @@ int main(int argc, char **argv)
 		std::cout << "computing mean..." << std::endl;
 		gvspcPix mu = fifo_phot.mean();
 		std::cout << "done mean..." << std::endl;
+		
+//		gvspcCsv sample("v2pms.csv");
+//		sample.info();
+//		std::vector<std::vector<double> > dd;
+//		std::vector<std::vector<int> > ii;
+//		std::cout << "Reading variable #"<< sample.read_as_dbl("v2pm2_p0", dd) << std::endl;
+//		for (i=0; i<dd.size(); i++)
+//		{
+//			for (int j=0; j<dd[i].size(); j++)
+//				std::cout << ((j==0) ? "" : ",") << dd[i][j];
+//			std::cout << std::endl;
+//		}
+//		sample.read_as_dbl("v2pm49_p0", dd);
+//		std::cout << std::endl;
+//		std::cout << "Reading variable #"<< sample.read_as_int("v2pm0_p0", ii) << std::endl;
+//		for (i=0; i<ii.size(); i++)
+//		{
+//			for (int j=0; j<ii[i].size(); j++)
+//				std::cout << ((j==0) ? "" : ",") << ii[i][j];
+//			std::cout << std::endl;
+//		}
+//		std::cout << std::endl;
+//		std::cout << "Reading variable #"<< sample.read_as_dbl("v2pm0_p0", dd) << std::endl;
+//		for (i=0; i<dd.size(); i++)
+//		{
+//			for (int j=0; j<dd[i].size(); j++)
+//				std::cout << ((j==0) ? "" : ",") << dd[i][j];
+//			std::cout << std::endl;
+//		}
 		
 	}
 	

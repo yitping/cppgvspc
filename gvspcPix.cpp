@@ -14,15 +14,15 @@ gvspcPix::gvspcPix(int n_ch, int n_pl)
 	resize(n_ch, n_pl); std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
-gvspcPix::gvspcPix(const gvspcPix& other_pix)
+gvspcPix::gvspcPix(const gvspcPix& B)
 {
-	copy(other_pix);
+	copy(B);
 	std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
-gvspcPix::gvspcPix(const gvspcPix& other_pix, int j, int p)
+gvspcPix::gvspcPix(const gvspcPix& B, int j, int p)
 {
-	copy(other_pix, j, p);
+	copy(B, j, p);
 	std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
@@ -103,9 +103,9 @@ double gvspcPix::sum()
 	return sum;
 }
 
-gvspcPix& gvspcPix::operator=(const gvspcPix& other_pix)
+gvspcPix& gvspcPix::operator=(const gvspcPix& B)
 {
-	copy(other_pix);
+	copy(B);
 	return *this;
 }
 
@@ -263,26 +263,26 @@ void gvspcPix::init(int n_ph, int n_bl, int n_ch, int n_pl)
 	if (!y.empty()) y.clear();
 }
 
-void gvspcPix::copy(const gvspcPix& other_pix)
+void gvspcPix::copy(const gvspcPix& B)
 {
-	if (this == &other_pix) return; // avoid self assignment
-	init(other_pix.n_ch, other_pix.n_pl);
-	v = other_pix.v;
-	y = other_pix.y;
+	if (this == &B) return; // avoid self assignment
+	init(B.n_ch, B.n_pl);
+	v = B.v;
+	y = B.y;
 }
 
-void gvspcPix::copy(const gvspcPix& other_pix, int j, int p)
+void gvspcPix::copy(const gvspcPix& B, int j, int p)
 {
-	if (this == &other_pix) return; // avoid self assignment
+	if (this == &B) return; // avoid self assignment
 	init(1,1);
-	if ((j >= other_pix.num_ch()) ||
-			(p >= other_pix.num_pl())) return;
+	if ((j >= B.num_ch()) ||
+			(p >= B.num_pl())) return;
 	long l0 = convert_4D_indices(0,0,j,p);
 	long l1 = convert_4D_indices(0,0,j,p,1);
 	for (int l=0; l<n_ph*n_bl; l++)
 	{
-		v.push_back(other_pix.v[l0+l]);
-		y.push_back(other_pix.y[l1]);
+		v.push_back(B.v[l0+l]);
+		y.push_back(B.y[l1]);
 	}
 }
 

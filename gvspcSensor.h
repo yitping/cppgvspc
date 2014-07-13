@@ -41,7 +41,6 @@ class gvspcSensor
 	// v2 6 x n_ch
 	// fl 4
 	// opl 4
-	// v2pm 24 x 16 x n_ch
 	// lm 1
 	
 
@@ -65,8 +64,8 @@ public:
 	int set_ps(const std::vector<double>& ps);
 	int compute_v2pms();
 	int compute_pserr(); // spare
-	int load_v2pms_from_file(const char *);
-	int save_v2pms_to_file(const char *);
+	int load_v2pms(const char *filename);
+	int save_v2pms(const char *filename);
 
 	// for debugging purpose
 	void dump_a_pix();

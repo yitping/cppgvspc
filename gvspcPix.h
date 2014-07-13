@@ -14,15 +14,15 @@ class gvspcPix
 	public:
 	gvspcPix();
 	gvspcPix(int n_ch, int n_pl);
-	gvspcPix(const gvspcPix& other_pix);
-	gvspcPix(const gvspcPix& other_pix, int j, int p);
+	gvspcPix(const gvspcPix& B);
+	gvspcPix(const gvspcPix& B, int j, int p);
 	~gvspcPix();
 
 	// prepare internal array
 	void resize(int n_ch, int n_pl);
 
 	// operators
-	gvspcPix& operator=(const gvspcPix& other_pix);
+	gvspcPix& operator=(const gvspcPix& B);
 	double operator[](long i);
 	gvspcPix operator+(const gvspcPix& B) const;
 	gvspcPix operator-(const gvspcPix& B) const;
@@ -61,8 +61,8 @@ class gvspcPix
 	private:
 	void init(int n_ch, int n_pl);
 	void init(int n_ph, int n_bl, int n_ch, int n_pl);
-	void copy(const gvspcPix& other_pix);
-	void copy(const gvspcPix& other_pix, int j, int p);
+	void copy(const gvspcPix& B);
+	void copy(const gvspcPix& B, int j, int p);
 	long convert_img_indices(int l, int j, int p, int isYjunc=0);
 	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0) const;
 	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0);

@@ -15,12 +15,24 @@ gvspcV2PM::gvspcV2PM()
 	std::cout << "1 V2PM created" << std::endl;
 }
 
+gvspcV2PM::gvspcV2PM(const gvspcV2PM& B)
+{
+	copy(B);
+	std::cout << "1 V2PM copied" << std::endl;
+}
+
 gvspcV2PM::gvspcV2PM(std::vector<gvspcPix>& phot,
 										 double sum_phot[],
 										 std::vector<int> t[],
 										 double a[])
 {
 	set(phot, sum_phot, t, a);
+	std::cout << "1 V2PM (full) created" << std::endl;
+}
+
+gvspcV2PM::gvspcV2PM(const std::vector<std::vector<double> >& BM)
+{
+	set(BM);
 	std::cout << "1 V2PM (full) created" << std::endl;
 }
 
@@ -85,6 +97,18 @@ int gvspcV2PM::set(std::vector<gvspcPix>& phot,
 	return 0;
 }
 
+int gvspcV2PM::set(const std::vector<std::vector<double> >& BM)
+{
+	M = BM;
+	return 0;
+}
+
+gvspcV2PM& gvspcV2PM::operator=(const gvspcV2PM& B)
+{
+	copy(B);
+	return *this;
+}
+
 int gvspcV2PM::nrow() { return M.size(); }
 int gvspcV2PM::ncol() { return M[0].size(); }
 
@@ -103,6 +127,12 @@ int gvspcV2PM::save_to_file(const char *fname, const char *label, int append)
 
 
 ///// private /////
+
+void gvspcV2PM::copy(const gvspcV2PM& B)
+{
+	M = B.M;
+	e = B.e;
+}
 
 double gvspcV2PM::cosd(double d)
 {

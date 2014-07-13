@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include "gvspcSensor.h"
+#include "gvspcCsv_c.h"
 #include "gvspcCsv.h"
 #include "gvspcErrorCode.h"
 
@@ -190,15 +191,59 @@ int gvspcSensor::compute_v2pms()
 	return GVSPC_ERROR_NONE;
 }
 
-int gvspcSensor::save_v2pms_to_file(const char *fname)
+int gvspcSensor::load_v2pms(const char *filename)
 {
+	gvspcCsv v2pmfile(filename);
+	
+	if (!v2pmfile.has_linked_file())
+	{
+		std::cerr << "v2pm file not loaded" << std::endl;
+		return GVSPC_ERROR_FILE_IO;
+	}
+	
+	int n_var;
+	
+	if ((n_var = v2pmfile.has_variables()) == 0)
+	{
+		std::cerr << "v2pm file has no data" << std::endl;
+		return GVSPC_ERROR_INPUT_BAD;
+	}
+	
+	if (n_var != n_ch*n_pl)
+	{
+		std::cerr << "number of v2pms in file mismatched" << std::endl;
+		return GVSPC_ERROR_INPUT_BAD;
+	}
+	
+	std::cout << "loading v2pms" << std::endl;
+	
+	if (v2pms.size() != n_var) v2pms.resize(n_var);
+	
+	std::vector<std::vector<double> > v2pm;
+	for (int i=0; i<n_var; i++)
+	{
+		v2pmfile.read_as_dbl(i, v2pm);
+		v2pms[i].set(v2pm);
+	}
+	
+	return GVSPC_ERROR_NONE;
+}
+
+int gvspcSensor::save_v2pms(const char *filename)
+{
+	if (v2pms.empty())
+	{
+		std::cerr << "no v2pms to write" << std::endl;
+		return GVSPC_ERROR_INPUT_BAD;
+	}
 	int p, j, l;
 	std::string label;
+	std::cout << "writing v2pms to file" << std::endl;
 	for (p=0; p<n_pl; p++) for (j=0; j<n_ch; j++)
 	{
 		l = p*n_ch + j;
 		label = "v2pm" + std::to_string(j) + "_p" + std::to_string(p);
-		v2pms[l].save_to_file(fname, label.c_str(), ((p == 0) && (j == 0)) ? 0 : 1);
+		v2pms[l].save_to_file(filename, label.c_str(), ((p == 0) && (j == 0)) ? 0 : 1);
 	}
 	return GVSPC_ERROR_NONE;
 }
