@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 					sensor.process_image(image, 1);
 					cpl_image_delete(image);
 					
-					sensor.compute_fv(0);
+					sensor.compute_fv(selpol);
 					sensor.compute_gd();
 					sensor.compute_opl();
 					

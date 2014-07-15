@@ -61,11 +61,7 @@ class gvspcPix
 	const std::vector<double>& data(int j, int p);
 
 	// sum over v and y
-	double sum();
-	
-	// debug
-	int save_to_file(const char *fname, const char *label, int append);
-	int save_to_file(std::string& fname, std::string& label, int append);
+	double sum(int p=0);
 
 	private:
 	void init(int n_ch, int n_pl);

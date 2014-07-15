@@ -94,11 +94,19 @@ double gvspcPix::get(int k, int i, int j, int p)
 
 double gvspcPix::get(long i) { return v[i]; }
 
-double gvspcPix::sum()
+double gvspcPix::sum(int p)
 {
 	double sum=0.0;
-	for (std::vector<double>::iterator i=v.begin(); i != v.end(); i++) sum += *i;
-	for (std::vector<double>::iterator i=y.begin(); i != y.end(); i++) sum += *i;
+	int begin_ix, end_ix, i;
+	
+	begin_ix = (p == 0) ? 0 : convert_4D_indices(0,0,0,1);
+	end_ix   = (p == 0) ? convert_4D_indices(0,0,0,1) : v.size();
+	for (i=begin_ix; i<end_ix; i++) sum += v[i];
+	
+	begin_ix = (p == 0) ? 0 : convert_4D_indices(0,0,0,1,1);
+	end_ix   = (p == 0) ? convert_4D_indices(0,0,0,1,1) : y.size();
+	for (i=begin_ix; i<end_ix; i++) sum += y[i];
+	
 	return sum;
 }
 
@@ -220,32 +228,6 @@ gvspcPix& gvspcPix::operator/=(const gvspcPix& B)
 	}
 	return *this;
 }
-
-int gvspcPix::save_to_file(std::string& fname, std::string& label, int append)
-{
-	return save_to_file(fname.c_str(), label.c_str(), append);
-}
-
-// TODO: tbrm --
-int gvspcPix::save_to_file(const char *fname, const char *label, int append)
-{
-	std::ofstream csv(fname, (append == 1) ? std::ios::app : std::ios::out);
-	csv << "# " << label << "_v, " << v.size()/n_ph/n_bl << ", " << n_ph*n_bl << std::endl;
-	for (int p=0; p<n_pl; p++) for (int j=0; j<n_ch; j++)
-	{
-		for (int i=0; i<n_bl; i++) for (int k=0; k<n_ph; k++)
-			csv << (((i == 0) && (k == 0)) ? "" : ",") << v[convert_4D_indices(k,i,j,p)];
-		csv << std::endl;
-	}
-	csv << "# " << label << "_y, " << y.size() << ", 1" << std::endl;
-	for (int p=0; p<n_pl; p++) for (int j=0; j<n_ch; j++)
-	{
-		csv << y[convert_4D_indices(0,0,j,p,1)] << std::endl;
-	}
-	csv.close();
-	return 0;
-}
-// -- tbrm
 
 const std::vector<double>& gvspcPix::data()
 {

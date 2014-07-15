@@ -8,6 +8,9 @@
 
 #include "gvspcSensor.h"
 
+// TODO: check for memory leaks
+// TODO: clean up messages
+
 gvspcSensor::gvspcSensor(int m, int n) : n_tel(m), n_ph(n), n_bl(0.5*m*(m-1))
 {
 	init();
@@ -190,15 +193,19 @@ int gvspcSensor::compute_v2pms()
 	int t, p, j, l;
 	
 	std::cout << "size of v2pms = " << v2pms.size() << std::endl;
-	for (t=0; t<n_tel; t++) sum[t] = mean_phot[t].sum()/n_ch;
-	for (p=0; p<n_pl; p++) for (j=0; j<n_ch; j++)
+	
+	for (p=0; p<n_pl; p++)
 	{
-		l = p*n_ch + j;
-		// TODO: this is not efficient
-		for (t=0; t<n_tel; t++) subpix[t] = gvspcPix(mean_phot[t],j,p);
-		v2pms[l].set(subpix, sum.data(), tels, ps.data());
-		std::cout << "abc" << std::endl;
-		std::cout << v2pms[l].nrow() << "x" << v2pms[l].ncol() << std::endl;
+		for (t=0; t<n_tel; t++) sum[t] = mean_phot[t].sum(p)/n_ch;
+		for (j=0; j<n_ch; j++)
+		{
+			l = p*n_ch + j;
+			// TODO: this is not efficient
+			for (t=0; t<n_tel; t++) subpix[t] = gvspcPix(mean_phot[t],j,p);
+			v2pms[l].set(subpix, sum.data(), tels, ps.data());
+			std::cout << "abc" << std::endl;
+			std::cout << v2pms[l].nrow() << "x" << v2pms[l].ncol() << std::endl;
+		}
 	}
 	
 	return GVSPC_ERROR_NONE;
@@ -312,7 +319,7 @@ const std::vector<double>& gvspcSensor::compute_opl()
 {
 	int i, j;
 	double aij;
-	double min_step=0.0001; // in mm
+//	double min_step=0.0001; // in mm
 	gvspcLS opd2opl(n_bl, n_tel);
 	
 	for (i=0; i<n_bl; i++)
