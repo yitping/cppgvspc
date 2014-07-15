@@ -2,11 +2,8 @@
 #include <cpl.h>
 #include <unistd.h>
 #include <string.h>
-#include "gvspcPix.h"
-#include "gvspcFifo.h"
-#include "gvspcV2PM.h"
 #include "gvspcSensor.h"
-#include "gvspcCsv.h"
+
 
 int main(int argc, char **argv)
 {
@@ -194,6 +191,7 @@ int main(int argc, char **argv)
 				sensor.process_image(image, 1);
 				cpl_image_delete(image);
 			}
+			sensor.dump_a_pix();
 			sensor.save_phot(4);
 			
 			long x;
@@ -206,11 +204,10 @@ int main(int argc, char **argv)
 			std::cout << "x = " << x << std::endl;
 
 			sensor.set_default_ps();
-			sensor.load_v2pms("v2pms.csv");
-//			sensor.compute_v2pms();
+//			sensor.load_v2pms("v2pms.csv");
+			sensor.compute_v2pms();
 			sensor.save_v2pms(file_p2vm);
-			sensor.dump_an_index();
-//			sensor.dump_a_pix();
+//			sensor.dump_an_index();
 			
 		}
 		

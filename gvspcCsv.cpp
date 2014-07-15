@@ -6,11 +6,6 @@
 //  Copyright (c) 2014 MPE. All rights reserved.
 //
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <vector>
 #include "gvspcCsv.h"
 
 gvspcCsv::gvspcCsv()
@@ -19,9 +14,9 @@ gvspcCsv::gvspcCsv()
 	std::cout << "1 gvspcCsv created" << std::endl;
 }
 
-gvspcCsv::gvspcCsv(const char *filename, int rw)
+gvspcCsv::gvspcCsv(const char *filename, int overwrite)
 {
-	link_to(filename, rw);
+	link_to(filename, overwrite);
 	std::cout << "1 gvspcCsv (linked) created" << std::endl;
 }
 
@@ -30,16 +25,15 @@ gvspcCsv::~gvspcCsv()
 	std::cout << "1 gvspcCsv destroyed" << std::endl;
 }
 
-int gvspcCsv::link_to(const char *filename, int rw)
+int gvspcCsv::link_to(const char *filename, int overwrite)
 {
-	std::ifstream fin(filename, (rw == 0) ? std::ios::in : std::ios::out);
-	if (!fin.is_open())
-	{
-		std::cerr << "cannot open file: " << filename << std::endl;
-		fin.close();
-		return 0;
-	}
 	this->filename = filename;
+	
+	// don't bother to read an existing file if overwrite
+	if (overwrite != 0) return 0;
+	
+	std::ifstream fin(filename, std::ios::in);
+	if (!fin.is_open()) return 0;
 
 	std::string line, label, delim;
 	long lnum=0, m, n;
@@ -58,14 +52,12 @@ int gvspcCsv::link_to(const char *filename, int rw)
 		lnum++;
 	}
 
-	file_linked = true;
-
 	fin.close();
 	return 0;
 }
 
 int gvspcCsv::has_variables() { return labels.size(); }
-bool gvspcCsv::has_linked_file() { return file_linked; }
+bool gvspcCsv::has_linked_file() { return filename.size(); }
 
 void gvspcCsv::info()
 {
@@ -119,6 +111,49 @@ int gvspcCsv::read_as_int(int vnum, std::vector<std::vector<int> >& data)
 		for (int j=0; j<content[i].size(); j++) data[i][j] = stoi(content[i][j]);
 	}
 	return vnum;
+}
+
+int gvspcCsv::write(const char *label, const std::vector<std::vector<double> >& data)
+{
+	std::ofstream csv(filename, (labels.empty()) ? std::ios::out : std::ios::app);
+	labels.push_back(std::string(label));
+	nrows.push_back(data.size());
+	ncols.push_back(data[0].size());
+	// TODO: line number is garbage now and needs to be fixed!
+	lnums.push_back(0);
+	csv << "# " << label << ", " << data.size() << ", " << data[0].size() << std::endl;
+	for (int i=0; i<data.size(); i++)
+	{
+		for (int j=0; j<data[i].size(); j++)
+			csv << ((j == 0) ? "" : ",") << data[i][j];
+		csv << std::endl;
+	}
+	csv.close();
+	return 0;
+}
+
+int gvspcCsv::write(const char *label, const std::vector<double>& data, int m, int n)
+{
+	if (data.size() != m*n)
+	{
+		std::cerr << "size of data and m x n mismatched" << std::endl;
+		return 1;
+	}
+	std::ofstream csv(filename, (labels.empty()) ? std::ios::out : std::ios::app);
+	labels.push_back(std::string(label));
+	nrows.push_back(m);
+	ncols.push_back(n);
+	// TODO: line number is garbage now and needs to be fixed!
+	lnums.push_back(0);
+	csv << "# " << label << ", " << m << ", " << n << std::endl;
+	for (int i=0; i<m; i++)
+	{
+		for (int j=0; j<n; j++)
+			csv << ((j == 0) ? "" : ",") << data[i*n+j];
+		csv << std::endl;
+	}
+	csv.close();
+	return 0;
 }
 
 int gvspcCsv::debugme(const char *fname)

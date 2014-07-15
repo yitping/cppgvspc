@@ -9,29 +9,34 @@
 #ifndef cppgvspc_gvspcV2PM_h
 #define cppgvspc_gvspcV2PM_h
 
+#include <iostream>
+#include <fstream>
 #include <vector>
-#include "gvspcConst.h"
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_cblas.h>
+#include <gsl/gsl_blas.h>
 #include "gvspcPix.h"
 
 class gvspcV2PM
 {
 	std::vector<std::vector<double> > M;
-	std::vector<double> e;
+	std::vector<double> vis;
 	
 public:
 	gvspcV2PM();
 	gvspcV2PM(const gvspcV2PM& B);
 	// this can be inefficient because not all elements in this huge gvspcPix are used
-	gvspcV2PM(std::vector<gvspcPix>& phot,
+	gvspcV2PM(const std::vector<gvspcPix>& phot,
 						double sum_phot[],
-						std::vector<int> t[],
+						const std::vector<int> t[],
 						double a[]);
 	gvspcV2PM(const std::vector<std::vector<double> >& BM);
 	~gvspcV2PM();
 	
-	int set(std::vector<gvspcPix>& phot,
+	int set(const std::vector<gvspcPix>& phot,
 					double sum_phot[],
-					std::vector<int> t[],
+					const std::vector<int> t[],
 					double a[]);
 	int set(const std::vector<std::vector<double> >& BM);
 	const std::vector<std::vector<double> >& get() const;
@@ -41,7 +46,8 @@ public:
 	int nrow();
 	int ncol();
 	
-	int save_to_file(const char *csv, const char *label, int append);
+	const std::vector<double>& solve(const std::vector<double>& pix);
+	const std::vector<double>& solve(const std::vector<double>& pix, const std::vector<double>& var);
 	
 private:
 	void init();

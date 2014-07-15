@@ -1,15 +1,19 @@
 #ifndef GVSPCPIX_H
 #define GVSPCPIX_H
 
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <cpl.h>
-#include "gvspcConst.h"
+
+#define NUM_IO_OUTPUT			23
 
 class gvspcPix
 {
 	int n_ph, n_bl, n_ch, n_pl;
 	std::vector<double> v;
 	std::vector<double> y; // Y-junction
+	std::vector<double> v_jp;
 
 	public:
 	gvspcPix();
@@ -24,6 +28,7 @@ class gvspcPix
 	// operators
 	gvspcPix& operator=(const gvspcPix& B);
 	double operator[](long i);
+	double operator[](long i) const;
 	gvspcPix operator+(const gvspcPix& B) const;
 	gvspcPix operator-(const gvspcPix& B) const;
 	gvspcPix operator*(double b) const;
@@ -50,6 +55,10 @@ class gvspcPix
 	// get the value of each pixel
 	double get(int k, int i, int j, int p);
 	double get(long i);
+	
+	// get the all pixels or an area of the pixels
+	const std::vector<double>& data();
+	const std::vector<double>& data(int j, int p);
 
 	// sum over v and y
 	double sum();

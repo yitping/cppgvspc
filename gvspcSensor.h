@@ -1,11 +1,16 @@
 #ifndef GVSPCSENSOR_H
 #define GVSPCSENSOR_H
 
+#include <iostream>
 #include <vector>
-#include "gvspcConst.h"
 #include "gvspcPix.h"
 #include "gvspcFifo.h"
 #include "gvspcV2PM.h"
+#include "gvspcCsv_c.h"
+#include "gvspcCsv.h"
+#include "gvspcErrorCode.h"
+
+#define MIN_FIFOSIZE			5
 
 class gvspcSensor
 {
@@ -15,6 +20,7 @@ class gvspcSensor
 	
 	int n_ch, n_pl;
 	std::vector<int> tels[2];
+	std::vector<int> sign;
 	std::vector<int> pixel_index;
 	int corner_ch, corner_io;
 	double bw;
@@ -30,19 +36,14 @@ class gvspcSensor
 	gvspcPix var_dark;
 	std::vector<gvspcV2PM> v2pms;
 	std::vector<double> flux;
+	std::vector<std::vector<double> > v_cos_pd;
+	std::vector<std::vector<double> > v_sin_pd;
+	std::vector<double> gd;
+	std::vector<double> opl;
 	
 	// for calibration only
 	std::vector<gvspcPix> mean_phot;
 	std::vector<double> ps;
-	
-	
-	// gd 6
-	// pd 6 x n_ch
-	// v2 6 x n_ch
-	// fl 4
-	// opl 4
-	// lm 1
-	
 
 public:
 	gvspcSensor(int m=4, int n=4);
@@ -55,6 +56,18 @@ public:
 
 	// for regular analysis
 	int process_image(cpl_image *img, int type);
+	const std::vector<double>& compute_fv(int p);
+	const std::vector<double>& compute_gd();
+	const std::vector<double>& compute_opl();
+	double get_flux(int t);
+	double get_gd(int i);
+	double get_pd(int i, int j);
+	double get_v2(int i, int j);
+	int num_baselines();
+	int num_polstates();
+	int num_telescopes();
+	int num_scichannel();
+	int get_tel(int i, int t);
 	
 	// for calibration only
 	int load_pixel_indices(char *csv);
@@ -63,7 +76,7 @@ public:
 	int set_default_ps();
 	int set_ps(const std::vector<double>& ps);
 	int compute_v2pms();
-	int compute_pserr(); // spare
+	int compute_pserr(); // TODO: tbd
 	int load_v2pms(const char *filename);
 	int save_v2pms(const char *filename);
 

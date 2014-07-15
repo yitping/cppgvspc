@@ -1,5 +1,4 @@
-#include <iostream>
-#include <fstream>
+
 #include "gvspcPix.h"
 
 gvspcPix::gvspcPix()
@@ -110,6 +109,7 @@ gvspcPix& gvspcPix::operator=(const gvspcPix& B)
 }
 
 double gvspcPix::operator[](long i) { return v[i]; }
+double gvspcPix::operator[](long i) const { return v[i]; }
 
 gvspcPix gvspcPix::operator+(const gvspcPix& B) const
 {
@@ -226,6 +226,7 @@ int gvspcPix::save_to_file(std::string& fname, std::string& label, int append)
 	return save_to_file(fname.c_str(), label.c_str(), append);
 }
 
+// TODO: tbrm --
 int gvspcPix::save_to_file(const char *fname, const char *label, int append)
 {
 	std::ofstream csv(fname, (append == 1) ? std::ios::app : std::ios::out);
@@ -244,13 +245,27 @@ int gvspcPix::save_to_file(const char *fname, const char *label, int append)
 	csv.close();
 	return 0;
 }
+// -- tbrm
+
+const std::vector<double>& gvspcPix::data()
+{
+	return v;
+}
+
+const std::vector<double>& gvspcPix::data(int j, int p)
+{
+	v_jp.assign(v.begin()+convert_4D_indices(0,0,j,p,0),
+							v.begin()+convert_4D_indices(n_ph-1,n_bl-1,j,p,0)+1);
+	return v_jp;
+}
 
 
 ///// private /////
 
 void gvspcPix::init(int n_ch, int n_pl)
 {
-	init(MAX_PHASE_SHIFTS, NUM_BASELINES, n_ch, n_pl);
+//	init(MAX_PHASE_SHIFTS, NUM_BASELINES, n_ch, n_pl);
+	init(4, 6, n_ch, n_pl);
 }
 
 void gvspcPix::init(int n_ph, int n_bl, int n_ch, int n_pl)

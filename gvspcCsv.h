@@ -9,7 +9,9 @@
 #ifndef cppgvspc_gvspcCsv_h
 #define cppgvspc_gvspcCsv_h
 
+#include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -25,7 +27,7 @@ class gvspcCsv
 	
 public:
 	gvspcCsv();
-	gvspcCsv(const char *filename, int rw=0);
+	gvspcCsv(const char *filename, int overwrite=0);
 	~gvspcCsv();
 	
 	// checks
@@ -33,7 +35,7 @@ public:
 	bool has_linked_file();
 	
 	// compliments the default constructor
-	int link_to(const char *filename, int rw=0);
+	int link_to(const char *filename, int overwrite=0);
 	
 	// read functions
 	// TODO: there should be a better way but I'm oot.
@@ -44,6 +46,7 @@ public:
 	
 	// write functions
 	int write(const char *label, const std::vector<std::vector<double> >& data);
+	int write(const char *label, const std::vector<double>& data, int m, int n);
 	int write(const char *label, const std::vector<std::vector<int> >& data);
 	
 	void info();
