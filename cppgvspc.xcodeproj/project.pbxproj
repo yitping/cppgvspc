@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXFileReference section */
+		C9C350101974FD4700134F10 /* gvspcLS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcLS.h; sourceTree = "<group>"; };
+		C9C350111974FE1B00134F10 /* gvspcLS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcLS.cpp; sourceTree = "<group>"; };
 		C9D4279A196EE768001E204D /* gvspcPix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcPix.cpp; sourceTree = "<group>"; };
 		C9D4279B196EE768001E204D /* gvspcSensor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gvspcSensor.cpp; sourceTree = "<group>"; };
 		C9D4279C196EE768001E204D /* gvspcSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcSensor.h; sourceTree = "<group>"; };
@@ -32,6 +34,8 @@
 				C9D427AE1973181F001E204D /* cppgvspc.cpp */,
 				C9D427A8196FE790001E204D /* gvspcV2PM.h */,
 				C9D427A9196FF054001E204D /* gvspcV2PM.cpp */,
+				C9C350101974FD4700134F10 /* gvspcLS.h */,
+				C9C350111974FE1B00134F10 /* gvspcLS.cpp */,
 				C9D427A6196F1302001E204D /* gvspcFifo.h */,
 				C9D427A7196F243B001E204D /* gvspcFifo.cpp */,
 				C9D4279A196EE768001E204D /* gvspcPix.cpp */,

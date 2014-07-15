@@ -124,36 +124,39 @@ const std::vector<double>& gvspcV2PM::solve(const std::vector<double>& pix)
 		return vis;
 	}
 	
-	int i, j;
-	int nrow = M.size();
-	int ncol = M[0].size();
+//	int i, j;
+//	int nrow = M.size();
+//	int ncol = M[0].size();
 	
-	gsl_matrix *U = gsl_matrix_alloc(nrow, ncol);
-	gsl_matrix *V = gsl_matrix_alloc(ncol, ncol);
-	gsl_vector *s = gsl_vector_alloc(ncol);
-	gsl_vector *w = gsl_vector_alloc(ncol);
-	gsl_vector *x = gsl_vector_alloc(ncol);
-	gsl_vector *b = gsl_vector_alloc(nrow);
+	gvspcLS p2vm(M, pix);
+	vis = p2vm.solve();
 	
-	for (i=0; i<nrow; i++)
-	{
-		gsl_vector_set(b, i, pix[i]);
-		for (j=0; j<ncol; j++)
-			gsl_matrix_set(U, i, j, M[i][j]);
-	}
-	
-	gsl_linalg_SV_decomp(U, V, s, w);
-	gsl_linalg_SV_solve(U, V, s, b, x);
-	
-	for (j=0; j<ncol; j++)
-		vis[j] = gsl_vector_get(x, j);
-	
-	gsl_vector_free(b);
-	gsl_vector_free(x);
-	gsl_vector_free(w);
-	gsl_vector_free(s);
-	gsl_matrix_free(V);
-	gsl_matrix_free(U);
+//	gsl_matrix *U = gsl_matrix_alloc(nrow, ncol);
+//	gsl_matrix *V = gsl_matrix_alloc(ncol, ncol);
+//	gsl_vector *s = gsl_vector_alloc(ncol);
+//	gsl_vector *w = gsl_vector_alloc(ncol);
+//	gsl_vector *x = gsl_vector_alloc(ncol);
+//	gsl_vector *b = gsl_vector_alloc(nrow);
+//	
+//	for (i=0; i<nrow; i++)
+//	{
+//		gsl_vector_set(b, i, pix[i]);
+//		for (j=0; j<ncol; j++)
+//			gsl_matrix_set(U, i, j, M[i][j]);
+//	}
+//	
+//	gsl_linalg_SV_decomp(U, V, s, w);
+//	gsl_linalg_SV_solve(U, V, s, b, x);
+//	
+//	for (j=0; j<ncol; j++)
+//		vis[j] = gsl_vector_get(x, j);
+//	
+//	gsl_vector_free(b);
+//	gsl_vector_free(x);
+//	gsl_vector_free(w);
+//	gsl_vector_free(s);
+//	gsl_matrix_free(V);
+//	gsl_matrix_free(U);
 	
 	return vis;
 }

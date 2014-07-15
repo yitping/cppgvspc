@@ -9,10 +9,10 @@ MODULES = cppgvspc_gen_p2vm cppgvspc
 
 all: $(MODULES)
 
-cppgvspc: cppgvspc.o gvspcSensor.o gvspcPix.o gvspcCsv.o gvspcV2PM.o gvspcCsv_c.o
+cppgvspc: cppgvspc.o gvspcSensor.o gvspcPix.o gvspcCsv.o gvspcV2PM.o gvspcLS.o gvspcCsv_c.o
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-cppgvspc_gen_p2vm: cppgvspc_gen_p2vm.o gvspcSensor.o gvspcPix.o gvspcCsv.o gvspcCsv_c.o gvspcV2PM.o
+cppgvspc_gen_p2vm: cppgvspc_gen_p2vm.o gvspcSensor.o gvspcPix.o gvspcCsv.o gvspcV2PM.o gvspcLS.o gvspcCsv_c.o 
 	$(CXX) $(LDFLAGS) $^ -o $@
 
 %.o: %.c $(INCLUDES)

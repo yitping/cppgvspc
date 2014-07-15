@@ -166,6 +166,13 @@ int main(int argc, char **argv)
 					
 					sensor.compute_fv(0);
 					sensor.compute_gd();
+					sensor.compute_opl();
+					
+					for (t=0; t<sensor.num_telescopes(); t++)
+					{
+						std::cout << ((t == 0) ? "" : ",") << (((sensor.get_opl(t) < 0.0001) && (sensor.get_opl(t) > -0.0001)) ? 0 : sensor.get_opl(t));
+					}
+					std::cout << std::endl;
 				
 //				/* compute all relevant data */
 //				gvspc_data_compute_gd(mean_gd, mean_pd, mean_v2, 1);

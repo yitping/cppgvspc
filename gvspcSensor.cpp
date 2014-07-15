@@ -308,8 +308,31 @@ const std::vector<double>& gvspcSensor::compute_gd()
 	return gd;
 }
 
+const std::vector<double>& gvspcSensor::compute_opl()
+{
+	int i, j;
+	double aij;
+	double min_step=0.0001; // in mm
+	gvspcLS opd2opl(n_bl, n_tel);
+	
+	for (i=0; i<n_bl; i++)
+	{
+		opd2opl.setb(i, gd[i]);
+		for (j=0; j<n_tel; j++)
+		{
+			aij = (j == tels[0][i]-1) ? sign[i]*1 : ((j == tels[1][i]-1) ? -sign[i]*1 : 0);
+			opd2opl.setA(i, j, aij);
+		}
+	}
+	
+	opl = opd2opl.solve();
+	
+	return opl;
+}
+
 int gvspcSensor::get_tel(int i, int t) { return tels[t][i]; }
 double gvspcSensor::get_flux(int t) { return flux[t]; }
+double gvspcSensor::get_opl(int t) { return opl[t]; }
 double gvspcSensor::get_gd(int i) { return gd[i]; }
 double gvspcSensor::get_pd(int i, int j)
 {
@@ -337,7 +360,7 @@ void gvspcSensor::init()
 	
 	int ti[] = {3, 1, 1, 2, 2, 1};
 	int tj[] = {4, 4, 3, 4, 3, 2};
-	int tlsign[] = {1, 1,-1, 1, 1, 1};
+	int tlsign[] = {1, 1,-1, 1, 1,-1};
 	tels[0].assign(std::begin(ti), std::end(ti));
 	tels[1].assign(std::begin(tj), std::end(tj));
 	sign.assign(std::begin(tlsign), std::end(tlsign));

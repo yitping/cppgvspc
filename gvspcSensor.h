@@ -6,11 +6,12 @@
 #include "gvspcPix.h"
 #include "gvspcFifo.h"
 #include "gvspcV2PM.h"
+#include "gvspcLS.h"
 #include "gvspcCsv_c.h"
 #include "gvspcCsv.h"
 #include "gvspcErrorCode.h"
 
-#define MIN_FIFOSIZE			5
+#define MIN_FIFOSIZE	5
 
 class gvspcSensor
 {
@@ -60,6 +61,7 @@ public:
 	const std::vector<double>& compute_gd();
 	const std::vector<double>& compute_opl();
 	double get_flux(int t);
+	double get_opl(int t);
 	double get_gd(int i);
 	double get_pd(int i, int j);
 	double get_v2(int i, int j);

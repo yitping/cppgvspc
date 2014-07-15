@@ -17,6 +17,7 @@
 #include <gsl/gsl_cblas.h>
 #include <gsl/gsl_blas.h>
 #include "gvspcPix.h"
+#include "gvspcLS.h"
 
 class gvspcV2PM
 {
