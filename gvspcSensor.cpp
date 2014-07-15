@@ -9,7 +9,7 @@
 #include "gvspcSensor.h"
 
 // TODO: check for memory leaks
-// TODO: clean up messages
+// TODO: use covariance matrix to solve v2pm
 
 gvspcSensor::gvspcSensor() : n_tel(NUM_TELESCOPES), n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
@@ -33,29 +33,31 @@ int gvspcSensor::num_scichannel() { return n_ch; }
 
 
 // TODO: change to gvspcCsv for csv read/write
-int gvspcSensor::load_pixel_indices(char *csv)
+int gvspcSensor::load_pixel_indices(char *filename)
 {
-  int headerinfo[2], csv_n_ch, csv_n_sl, csv_n_pl, csv_corner_ch, csv_corner_io;
-	std::vector<int> temp_int;
-	std::vector<double> temp_dbl;
+  int csv_n_ch, csv_n_sl, csv_n_pl, csv_corner_ch, csv_corner_io;
+	std::vector<std::vector<int> > temp_int;
+	std::vector<std::vector<double> > temp_dbl;
 
-  /* get the corner coordinate */
-  if (csv2Intarr(csv, (char *) "corner", 1, 2, headerinfo) != 0)
+	gvspcCsv csv(filename);
+	
+  // get the corner coordinate
+  if (csv.read_as_int((char *) "corner", temp_int) == -1)
     return GVSPC_ERROR_INPUT_BAD;
-  csv_corner_ch = headerinfo[0];
-  csv_corner_io = headerinfo[1];
+  csv_corner_ch = temp_int[0][0];
+  csv_corner_io = temp_int[0][1];
   cpl_msg_debug(cpl_func, "corner_ch = %d", csv_corner_ch);
   cpl_msg_debug(cpl_func, "corner_io = %d", csv_corner_io);
 
-  /* get the image size */
-  if (csv2Intarr(csv, (char *) "cropsz", 1, 2, headerinfo) != 0)
+  // get the image size
+  if (csv.read_as_int((char *) "cropsz", temp_int) == -1)
     return GVSPC_ERROR_INPUT_BAD;
-  csv_n_ch = headerinfo[0];
-  csv_n_sl = headerinfo[1];
+  csv_n_ch = temp_int[0][0];
+  csv_n_sl = temp_int[0][1];
   cpl_msg_debug(cpl_func, "n_ch = %d", csv_n_ch);
   cpl_msg_debug(cpl_func, "n_sl = %d", csv_n_sl);
 
-  /* check consistency */
+  // check consistency
   if ((csv_n_sl % NUM_IO_OUTPUT) != 0)
   {
     cpl_msg_error(cpl_func, "unexpected number of polarization states.");
@@ -65,7 +67,7 @@ int gvspcSensor::load_pixel_indices(char *csv)
   csv_n_pl = csv_n_sl/NUM_IO_OUTPUT;
   cpl_msg_debug(cpl_func, "n_pl = %d", csv_n_pl);
 
-  /* check consistency */
+  // check consistency
   switch (csv_n_pl)
   {
     case 1:
@@ -80,28 +82,30 @@ int gvspcSensor::load_pixel_indices(char *csv)
       return GVSPC_ERROR_MODE_UNKNOWN;
   }
 
-  /* update the corner coordinate if 1st spectral channel is not at index 1 */
-  temp_int.resize(n_ch,0);
-  if (csv2Intarr(csv, (char *) "s_pix", 1, n_ch, &temp_int[0]) != 0)
+  // update the corner coordinate if 1st spectral channel is not at index 1
+  if (csv.read_as_int((char *) "s_pix", temp_int) == -1)
     return GVSPC_ERROR_INPUT_BAD;
-  corner_ch += temp_int[0];
+  corner_ch += temp_int[0][0];
   cpl_msg_debug(cpl_func, "corner_ch = %d", corner_ch);
 
-  temp_dbl.resize(n_ch,0);
-  if (csv2Dblarr(csv, (char *) "s_um", 1, n_ch, &temp_dbl[0]) != 0)
+  if (csv.read_as_dbl((char *) "s_um", temp_dbl) == -1)
     return GVSPC_ERROR_INPUT_BAD;
-  bw  = 0.1591549*temp_dbl[0]*temp_dbl[n_ch-1]/(temp_dbl[n_ch-1]-temp_dbl[0]);
+  bw  = 0.1591549*temp_dbl[0][0]*temp_dbl[0][n_ch-1]/(temp_dbl[0][n_ch-1]-temp_dbl[0][0]);
   bw *= 0.001; /* mm per radian */
   cpl_msg_debug(cpl_func, "bw (mm per radian) = %.6f", bw);
   
-  /* allocate memory for the indices and finally read it*/
-	pixel_index.resize(NUM_IO_OUTPUT*n_ch*n_pl,0);
-  if (csv2Intarr(csv, (char *) "idx", NUM_IO_OUTPUT*n_pl, n_ch, &pixel_index[0]) != 0)
+  // finally read it
+	pixel_index.clear();
+  if (csv.read_as_int((char *) "idx", temp_int) == -1)
   {
     cpl_msg_error(cpl_func, "unexpected error, freeing up unused memory.");
-    pixel_index.clear();
     return GVSPC_ERROR_FILE_IO;
   }
+	for (int i=0; i<temp_int.size(); i++) for (int j=0; j<temp_int[i].size(); j++)
+		pixel_index.push_back(temp_int[i][j]);
+	cpl_msg_debug(cpl_func, "index = %d, %d, ..., %d (%d)",
+								pixel_index[0], pixel_index[1],
+								pixel_index.back(), (int) pixel_index.size());
 	
 	indices_ready = true;
 	reinit();

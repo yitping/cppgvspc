@@ -210,10 +210,8 @@ int gvspcCsv::get_varnum(const char *label)
 {
 	if (labels.empty()) return -1;
 	std::string req(label);
-	std::cout << "Checking for " << req << std::endl;
 	for (int l=0; l<labels.size(); l++)
 	{
-		std::cout << labels[l] << std::endl;
 		if (req == labels[l]) return l;
 	}
 	return -1;

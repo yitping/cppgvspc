@@ -14,8 +14,6 @@
 		C9D4279C196EE768001E204D /* gvspcSensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcSensor.h; sourceTree = "<group>"; };
 		C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cppgvspc_gen_p2vm.cpp; sourceTree = "<group>"; };
 		C9D4279E196EE768001E204D /* gvspcPix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcPix.h; sourceTree = "<group>"; };
-		C9D4279F196EE768001E204D /* gvspcCsv_c.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gvspcCsv_c.c; sourceTree = "<group>"; };
-		C9D427A1196EE768001E204D /* gvspcCsv_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcCsv_c.h; sourceTree = "<group>"; };
 		C9D427A2196EE768001E204D /* gvspcErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcErrorCode.h; sourceTree = "<group>"; };
 		C9D427A3196EE7CE001E204D /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		C9D427A6196F1302001E204D /* gvspcFifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gvspcFifo.h; sourceTree = "<group>"; wrapsLines = 0; };
@@ -46,8 +44,6 @@
 				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
 				C9D427A3196EE7CE001E204D /* Makefile */,
 				C9D4279E196EE768001E204D /* gvspcPix.h */,
-				C9D4279F196EE768001E204D /* gvspcCsv_c.c */,
-				C9D427A1196EE768001E204D /* gvspcCsv_c.h */,
 				C9D427A2196EE768001E204D /* gvspcErrorCode.h */,
 			);
 			sourceTree = "<group>";
