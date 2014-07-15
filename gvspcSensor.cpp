@@ -11,16 +11,14 @@
 // TODO: check for memory leaks
 // TODO: clean up messages
 
-gvspcSensor::gvspcSensor(int m, int n) : n_tel(m), n_ph(n), n_bl(0.5*m*(m-1))
+gvspcSensor::gvspcSensor() : n_tel(NUM_TELESCOPES), n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
 	init();
-	std::cout << "1 gvspcSensor created!" << std::endl;
 }
 
 
 gvspcSensor::~gvspcSensor()
 {
-	std::cout << "1 gvspcSensor destroyed!" << std::endl;
 }
 
 
@@ -115,10 +113,6 @@ int gvspcSensor::load_pixel_indices(char *csv)
 int gvspcSensor::process_image(cpl_image *image, int type)
 {
 	if (image == NULL) return GVSPC_ERROR_INPUT_BAD;
-	
-	std::cout << "image size = " <<
-		cpl_image_get_size_x(image) << " x " <<
-		cpl_image_get_size_y(image) << std::endl;
 
 	gvspcPix new_pix(n_ch, n_pl);
 	if (new_pix.set(image, &pixel_index[0], corner_ch, corner_io) != 0)
@@ -136,11 +130,11 @@ int gvspcSensor::process_image(cpl_image *image, int type)
 			break;
 		case 1:
 		default:
+			// TODO: let minus away dark here
 			fifo_pix_flux.add(new_pix);//-mean_dark
 			cpl_msg_debug(cpl_func, "adding instantaneous flux into fifo..");
 	}
 	
-	std::cout << "process_image(): leaving" << std::endl;
 	return GVSPC_ERROR_NONE;
 }
 
@@ -192,8 +186,6 @@ int gvspcSensor::compute_v2pms()
 	std::vector<gvspcPix> subpix(n_tel);
 	int t, p, j, l;
 	
-	std::cout << "size of v2pms = " << v2pms.size() << std::endl;
-	
 	for (p=0; p<n_pl; p++)
 	{
 		for (t=0; t<n_tel; t++) sum[t] = mean_phot[t].sum(p)/n_ch;
@@ -203,8 +195,6 @@ int gvspcSensor::compute_v2pms()
 			// TODO: this is not efficient
 			for (t=0; t<n_tel; t++) subpix[t] = gvspcPix(mean_phot[t],j,p);
 			v2pms[l].set(subpix, sum.data(), tels, ps.data());
-			std::cout << "abc" << std::endl;
-			std::cout << v2pms[l].nrow() << "x" << v2pms[l].ncol() << std::endl;
 		}
 	}
 	
@@ -283,7 +273,6 @@ const std::vector<double>& gvspcSensor::compute_fv(int p)
 	gvspcPix last = fifo_pix_flux.last() - mean_dark;
 	std::vector<double> coh;
 	double f;
-	std::cout << "prepare to compute cv" << std::endl;
 	for (j=0; j<n_ch; j++)
 	{
 		coh = v2pms[p*n_ch+j].solve(last.data(j,p));
@@ -372,15 +361,14 @@ void gvspcSensor::init()
 	tels[1].assign(std::begin(tj), std::end(tj));
 	sign.assign(std::begin(tlsign), std::end(tlsign));
 	
-	fifo_pix_flux.limit(MIN_FIFOSIZE);
-	fifo_pix_dark.limit(MIN_FIFOSIZE);
+	fifo_pix_flux.limit(5);
+	fifo_pix_dark.limit(5);
 	mean_phot.resize(n_tel);
 	
 }
 
 void gvspcSensor::reinit()
 {
-	std::cout << "reinit()" << std::endl;
 	mean_dark.resize(n_ch, n_pl);
 	var_dark.resize(n_ch, n_pl);
 	v2pms.resize(n_ch*n_pl);
@@ -394,39 +382,5 @@ void gvspcSensor::reinit()
 	}
 	gd.resize(n_bl);
 	opl.resize(n_tel);
-}
-
-
-/////////////
-
-void gvspcSensor::dump_a_pix()
-{
-	std::cout << "Size of dark fifo = " << fifo_pix_dark.size() << std::endl;
-	if (fifo_pix_dark.size() != 0)
-		std::cout << "Size of latest pix in fifo = " << fifo_pix_dark.last().size() << std::endl;
-	std::cout << "Size of flux fifo = " << fifo_pix_flux.size() << std::endl;
-	if (fifo_pix_flux.size() != 0)
-	{
-		std::cout << "Size of latest pix in fifo = " << fifo_pix_flux.last().size() << std::endl;
-		gvspcPix a = fifo_pix_flux.last();
-//		std::vector<double> pix_alle = a.data();
-//		std::vector<double> pix_sub0 = a.data(0,0);
-//		std::vector<double> pix_sub1 = a.data(2,0);
-//		std::cout << "Size of data() in latest pix = " << a.data().size() << std::endl;
-//		std::cout << "Size of data(j,p) in latest pix = " << a.data(0,0).size() << std::endl;
-		
-		std::cout << "abc" << std::endl;
-		gvspcCsv sample("abc.csv", 1);
-		sample.write((char *) "all", a.data(), 100, 24);
-		sample.write((char *) "j0p0", a.data(0,0), 1, 24);
-		sample.write((char *) "j2p0", a.data(2,0), 1, 24);
-	}
-}
-
-
-void gvspcSensor::dump_an_index()
-{
-	std::cout << "Pixel index size = " << pixel_index.size() << std::endl;
-	intarr2Csv((char *) "index.csv", (char *) "index", pixel_index.size(), 1, &pixel_index[0], 0);
 }
 

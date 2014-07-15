@@ -11,18 +11,15 @@
 gvspcCsv::gvspcCsv()
 {
 	init();
-	std::cout << "1 gvspcCsv created" << std::endl;
 }
 
 gvspcCsv::gvspcCsv(const char *filename, int overwrite)
 {
 	link_to(filename, overwrite);
-	std::cout << "1 gvspcCsv (linked) created" << std::endl;
 }
 
 gvspcCsv::~gvspcCsv()
 {
-	std::cout << "1 gvspcCsv destroyed" << std::endl;
 }
 
 int gvspcCsv::link_to(const char *filename, int overwrite)

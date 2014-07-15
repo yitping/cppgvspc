@@ -6,16 +6,20 @@
 #include <vector>
 #include <cpl.h>
 
+#define NUM_TELESCOPES		4
+#define MAX_PHASE_SHIFTS	4
+#define NUM_BASELINES			0.5*NUM_TELESCOPES*(NUM_TELESCOPES-1)
 #define NUM_IO_OUTPUT			23
 
 class gvspcPix
 {
-	int n_ph, n_bl, n_ch, n_pl;
+	const int n_ph, n_bl;
+	int n_ch, n_pl;
 	std::vector<double> v;
 	std::vector<double> y; // Y-junction
 	std::vector<double> v_jp;
 
-	public:
+public:
 	gvspcPix();
 	gvspcPix(int n_ch, int n_pl);
 	gvspcPix(const gvspcPix& B);
@@ -63,13 +67,11 @@ class gvspcPix
 	// sum over v and y
 	double sum(int p=0);
 
-	private:
+private:
 	void init(int n_ch, int n_pl);
-	void init(int n_ph, int n_bl, int n_ch, int n_pl);
 	void copy(const gvspcPix& B);
 	void copy(const gvspcPix& B, int j, int p);
 	long convert_img_indices(int l, int j, int p, int isYjunc=0);
-	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0) const;
 	long convert_4D_indices(int k, int i, int j, int p, int isYjunc=0);
 
 };

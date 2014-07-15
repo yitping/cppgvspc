@@ -37,20 +37,17 @@ public:
 template <typename T>
 gvspcFifo<T>::gvspcFifo()
 {
-	std::cout << "empty gvspcFifo of type " << typeid(T).name() << " created." << std::endl;
 }
 
 template <typename T>
 gvspcFifo<T>::gvspcFifo(int s)
 {
 	limit(s);
-	std::cout << "1 gvspcFifo of type " << typeid(T).name() << " created." << std::endl;
 }
 
 template <typename T>
 gvspcFifo<T>::~gvspcFifo()
 {
-	std::cout << "1 gvspcFifo of type " << typeid(T).name() << " destroyed." << std::endl;
 }
 
 template <typename T>
@@ -61,7 +58,6 @@ void gvspcFifo<T>::add(const T& qi)
 {
 	if (q.size() == size_limit) { q.pop_front(); }
 	q.push_back(qi);
-	std::cout << "new size = " << q.size() << std::endl;
 }
 
 template <typename T>

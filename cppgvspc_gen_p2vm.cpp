@@ -191,93 +191,13 @@ int main(int argc, char **argv)
 				sensor.process_image(image, 1);
 				cpl_image_delete(image);
 			}
-			sensor.dump_a_pix();
 			sensor.save_phot(4);
-			
-			long x;
-			int k=4, j=1800, p=2;
-			i = 6;
-			x = k*i*j*p;
-			
-			std::cout << "Hello, world!" << std::endl;
-			std::cout << "tell me more!" << std::endl;
-			std::cout << "x = " << x << std::endl;
 
 			sensor.set_default_ps();
-//			sensor.load_v2pms("v2pms.csv");
 			sensor.compute_v2pms();
 			sensor.save_v2pms(file_p2vm);
-//			sensor.dump_an_index();
 			
 		}
-		
-		gvspcFifo<int> bint(5);
-		gvspcFifo<double> bdbl(10);
-		
-		bint.add(6); bint.add(1); bint.add(2); bint.add(6); bint.add(7); bint.add(10); bint.add(3);
-		bdbl.add(6.3); bdbl.add(2.4); bdbl.add(5.1); bdbl.add(3.9); bdbl.add(4.8);
-		
-		i = 2; std::cout << "bint[" << i << "] = " << bint[i] << std::endl;
-		i = 0; std::cout << "bdbl[" << i << "] = " << bdbl[i] << std::endl;
-		std::cout << "computing mean..." << std::endl;
-		std::cout << "mean bint = " << bint.mean() << "; var bint = " << bint.var() << std::endl;
-		std::cout << "done mean..." << std::endl;
-		std::cout << "computing mean..." << std::endl;
-		std::cout << "mean bdbl = " << bdbl.mean() << "; var bint = " << bdbl.var() << std::endl;
-		std::cout << "done mean..." << std::endl;
-		
-		for (i=0; i<bint.size(); i++)
-		{
-			std::cout << ((i == 0) ? "" : ", ") << bint[i];
-		}
-		std::cout << std::endl;
-		for (i=0; i<bdbl.size(); i++)
-		{
-			std::cout << ((i == 0) ? "" : ", ") << bdbl[i];
-		}
-		std::cout << std::endl;
-		
-		gvspcFifo<gvspcPix> fifo_phot(4);
-		for (i=0; i<10; i++)
-		{
-			std::cout << "creating..." << std::endl;
-			gvspcPix new_pix(10,2);
-			std::cout << "done..." << std::endl;
-			fifo_phot.add(new_pix);
-			std::cout << "leaving..." << std::endl;
-		}
-		std::cout << "computing mean..." << std::endl;
-		gvspcPix mu = fifo_phot.mean();
-		std::cout << "done mean..." << std::endl;
-		
-//		gvspcCsv sample("v2pms.csv");
-//		sample.info();
-//		std::vector<std::vector<double> > dd;
-//		std::vector<std::vector<int> > ii;
-//		std::cout << "Reading variable #"<< sample.read_as_dbl("v2pm2_p0", dd) << std::endl;
-//		for (i=0; i<dd.size(); i++)
-//		{
-//			for (int j=0; j<dd[i].size(); j++)
-//				std::cout << ((j==0) ? "" : ",") << dd[i][j];
-//			std::cout << std::endl;
-//		}
-//		sample.read_as_dbl("v2pm49_p0", dd);
-//		std::cout << std::endl;
-//		std::cout << "Reading variable #"<< sample.read_as_int("v2pm0_p0", ii) << std::endl;
-//		for (i=0; i<ii.size(); i++)
-//		{
-//			for (int j=0; j<ii[i].size(); j++)
-//				std::cout << ((j==0) ? "" : ",") << ii[i][j];
-//			std::cout << std::endl;
-//		}
-//		std::cout << std::endl;
-//		std::cout << "Reading variable #"<< sample.read_as_dbl("v2pm0_p0", dd) << std::endl;
-//		for (i=0; i<dd.size(); i++)
-//		{
-//			for (int j=0; j<dd[i].size(); j++)
-//				std::cout << ((j==0) ? "" : ",") << dd[i][j];
-//			std::cout << std::endl;
-//		}
 		
 	}
 	

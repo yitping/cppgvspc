@@ -10,7 +10,6 @@
 #define cppgvspc_gvspcV2PM_h
 
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_linalg.h>

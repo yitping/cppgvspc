@@ -1,8 +1,6 @@
 #ifndef GVSPCSENSOR_H
 #define GVSPCSENSOR_H
 
-#include <iostream>
-#include <vector>
 #include "gvspcPix.h"
 #include "gvspcFifo.h"
 #include "gvspcV2PM.h"
@@ -10,8 +8,6 @@
 #include "gvspcCsv_c.h"
 #include "gvspcCsv.h"
 #include "gvspcErrorCode.h"
-
-#define MIN_FIFOSIZE	5
 
 class gvspcSensor
 {
@@ -47,7 +43,7 @@ class gvspcSensor
 	std::vector<double> ps;
 
 public:
-	gvspcSensor(int m=4, int n=4);
+	gvspcSensor();
 	~gvspcSensor();
 
 	// checks
@@ -81,10 +77,6 @@ public:
 	int compute_pserr(); // TODO: tbd
 	int load_v2pms(const char *filename);
 	int save_v2pms(const char *filename);
-
-	// for debugging purpose
-	void dump_a_pix();
-	void dump_an_index();
 
 private:
 	void init();

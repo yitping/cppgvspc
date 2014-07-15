@@ -1,32 +1,38 @@
+//
+//  gvspcPix.cpp
+//  cppgvspc
+//
+//  Created by Yitping Kok on 7/11/14.
+//  Copyright (c) 2014 MPE. All rights reserved.
+//
 
 #include "gvspcPix.h"
 
-gvspcPix::gvspcPix()
+gvspcPix::gvspcPix() : n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
 	init(0,0);
-	std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
-gvspcPix::gvspcPix(int n_ch, int n_pl)
+gvspcPix::gvspcPix(int n_ch, int n_pl) : n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
 	init(n_ch, n_pl);
-	resize(n_ch, n_pl); std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
+	resize(n_ch, n_pl);
 }
 
-gvspcPix::gvspcPix(const gvspcPix& B)
+gvspcPix::gvspcPix(const gvspcPix& B) : n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
 	copy(B);
-	std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
-gvspcPix::gvspcPix(const gvspcPix& B, int j, int p)
+gvspcPix::gvspcPix(const gvspcPix& B, int j, int p) : n_ph(MAX_PHASE_SHIFTS), n_bl(NUM_BASELINES)
 {
 	copy(B, j, p);
-	std::cout << "1 gvspcPix["<< n_ch << "," << n_pl << "] created!" << std::endl;
 }
 
 
-gvspcPix::~gvspcPix() { std::cout << "1 gvspcPix destroyed!" << std::endl; }
+gvspcPix::~gvspcPix()
+{
+}
 
 void gvspcPix::resize(int n_ch, int n_pl)
 {
@@ -246,14 +252,6 @@ const std::vector<double>& gvspcPix::data(int j, int p)
 
 void gvspcPix::init(int n_ch, int n_pl)
 {
-//	init(MAX_PHASE_SHIFTS, NUM_BASELINES, n_ch, n_pl);
-	init(4, 6, n_ch, n_pl);
-}
-
-void gvspcPix::init(int n_ph, int n_bl, int n_ch, int n_pl)
-{
-	this->n_ph = n_ph;
-	this->n_bl = n_bl;
 	this->n_ch = n_ch;
 	this->n_pl = n_pl;
 	if (!v.empty()) v.clear();
@@ -268,19 +266,20 @@ void gvspcPix::copy(const gvspcPix& B)
 	y = B.y;
 }
 
+// TODO: this needs to be improved!
 void gvspcPix::copy(const gvspcPix& B, int j, int p)
 {
 	if (this == &B) return; // avoid self assignment
 	init(1,1);
-	if ((j >= B.num_ch()) ||
-			(p >= B.num_pl())) return;
-	long l0 = convert_4D_indices(0,0,j,p);
-	long l1 = convert_4D_indices(0,0,j,p,1);
+	resize(1,1);
+	if ((j >= B.num_ch()) || (p >= B.num_pl())) return;
+	long l0 = p*B.num_ch()*n_bl*n_ph + j*n_bl*n_ph;
+	long l1 = p*B.num_ch()+j;
 	for (int l=0; l<n_ph*n_bl; l++)
 	{
-		v.push_back(B.v[l0+l]);
-		y.push_back(B.y[l1]);
+		v[l] = B.v[l0+l];
 	}
+	y[0]= B.y[l1];
 }
 
 long gvspcPix::convert_img_indices(int l, int j, int p, int isYjunc)
@@ -298,11 +297,6 @@ long gvspcPix::convert_img_indices(int l, int j, int p, int isYjunc)
 		k = (k == 1) ? 2 : ((k == 2) ? 1 : k); // swap phase C and B
 		return p*n_ch*n_bl*n_ph + j*n_bl*n_ph + i*n_ph + k;
 	}
-}
-
-long gvspcPix::convert_4D_indices(int k, int i, int j, int p, int isYjunc) const
-{
-	return convert_4D_indices(k,i,j,p,isYjunc);
 }
 
 long gvspcPix::convert_4D_indices(int k, int i, int j, int p, int isYjunc)

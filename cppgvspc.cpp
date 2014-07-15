@@ -85,6 +85,12 @@ int main(int argc, char **argv)
     cpl_msg_debug(cpl_func, "index file: %s", file_index);
     cpl_msg_debug(cpl_func, "p2vm file: %s", file_p2vm);
     for (i=0; i<num_dark; i++) cpl_msg_debug(cpl_func, "dark file: %s", files_dark[i]);
+		if ((selpol < 0) || (selpol > 1))
+		{
+			std::cerr << "invalid selpol value, reverting to selpol=0" << std::endl;
+			selpol = 0;
+		}
+		cpl_msg_debug(cpl_func, "polarization: %d", selpol);
     if (file_out == NULL) cpl_msg_debug(cpl_func, "out file: <stdout>");
     else
     {
@@ -167,30 +173,6 @@ int main(int argc, char **argv)
 					sensor.compute_fv(selpol);
 					sensor.compute_gd();
 					sensor.compute_opl();
-					
-					for (t=0; t<sensor.num_telescopes(); t++)
-					{
-						std::cout << ((t == 0) ? "" : ",") << (((sensor.get_opl(t) < 0.0001) && (sensor.get_opl(t) > -0.0001)) ? 0 : sensor.get_opl(t));
-					}
-					std::cout << std::endl;
-				
-//				/* compute all relevant data */
-//				gvspc_data_compute_gd(mean_gd, mean_pd, mean_v2, 1);
-//				gvspc_data_compute_total_flux(mean_total_flux);
-//				gvspc_data_compute_opl(mean_opl);
-					
-//				/*
-//				 for (i=0; i<NUM_TELESCOPES; i++)
-//				 cpl_msg_debug(cpl_func, "flux[%d]: %10.0f", i+1, mean_total_flux[i]);
-//				 for (i=0; i<NUM_BASELINES; i++)
-//				 cpl_msg_debug(cpl_func, "gd[%d]: %4.5f", i+1, mean_gd[i]);
-//				 */
-//				output_format(outstr, fnum, j-1,
-//											mean_gd, 6,
-//											mean_v2, 6,
-//											mean_pd, 6,
-//											mean_total_flux, 4);
-//				fprintf((fptr == NULL) ? stdout : fptr, "%s\n", outstr);
 					
 					if (fout.is_open())
 					{

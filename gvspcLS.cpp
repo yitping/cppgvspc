@@ -11,14 +11,12 @@
 gvspcLS::gvspcLS()
 {
 	init();
-	std::cout << "1 gvspcLS created" << std::endl;
 }
 
 gvspcLS::gvspcLS(const std::vector<std::vector<double> >& A, const std::vector<double>& b)
 {
 	init();
 	set(A, b);
-	std::cout << "1 gvspcLS (full) created" << std::endl;
 }
 
 gvspcLS::gvspcLS(int m, int n)
@@ -27,13 +25,11 @@ gvspcLS::gvspcLS(int m, int n)
 	nrow = m; ncol = n;
 	A = gsl_matrix_alloc(nrow, ncol);
 	b = gsl_vector_alloc(nrow);
-	std::cout << "1 gvspcLS (full) created" << std::endl;
 }
 
 gvspcLS::~gvspcLS()
 {
 	clear();
-	std::cout << "1 gvspcLS destroyed" << std::endl;
 }
 
 void gvspcLS::setA(int i, int j, double aij) { gsl_matrix_set(A, i, j, aij); }
