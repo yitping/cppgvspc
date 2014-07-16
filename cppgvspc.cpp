@@ -147,6 +147,8 @@ int main(int argc, char **argv)
 					fout << std::setw(12-3) << "v2[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
 				for (i=0; i<sensor.num_baselines(); i++)
 					fout << std::setw(12-3) << "pd[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
+				for (i=0; i<3; i++)
+					fout << std::setw(12-2) << "cp[" << i << "]";
 				for (t=0; t<sensor.num_telescopes(); t++)
 					fout << std::setw(12-2) << "flux[" << t << "]";
 				fout << std::endl;
@@ -170,8 +172,7 @@ int main(int argc, char **argv)
 					sensor.process_image(image, 1);
 					cpl_image_delete(image);
 					
-					sensor.compute_fv(selpol);
-					sensor.compute_gd();
+					sensor.compute_opd(selpol);
 					sensor.compute_opl();
 					
 					if (fout.is_open())
@@ -184,6 +185,8 @@ int main(int argc, char **argv)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_v2(i, sensor.num_scichannel()/2);
 						for (i=0; i<sensor.num_baselines(); i++)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_pd(i, sensor.num_scichannel()/2);
+						for (i=0; i<3; i++)
+							fout << std::setprecision(5) << std::setw(12) << sensor.get_cp(i, sensor.num_scichannel()/2);
 						for (t=0; t<sensor.num_telescopes(); t++)
 							fout << std::setprecision(0) << std::setw(12) << sensor.get_flux(t);
 						fout << std::endl;

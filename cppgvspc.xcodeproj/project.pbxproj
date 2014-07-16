@@ -30,21 +30,21 @@
 			isa = PBXGroup;
 			children = (
 				C9D427AE1973181F001E204D /* cppgvspc.cpp */,
+				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
 				C9D427A8196FE790001E204D /* gvspcV2PM.h */,
 				C9D427A9196FF054001E204D /* gvspcV2PM.cpp */,
 				C9C350101974FD4700134F10 /* gvspcLS.h */,
 				C9C350111974FE1B00134F10 /* gvspcLS.cpp */,
 				C9D427A6196F1302001E204D /* gvspcFifo.h */,
 				C9D427A7196F243B001E204D /* gvspcFifo.cpp */,
+				C9D4279E196EE768001E204D /* gvspcPix.h */,
 				C9D4279A196EE768001E204D /* gvspcPix.cpp */,
+				C9D4279C196EE768001E204D /* gvspcSensor.h */,
 				C9D4279B196EE768001E204D /* gvspcSensor.cpp */,
 				C9D427AA19727928001E204D /* gvspcCsv.h */,
 				C9D427AB197281A8001E204D /* gvspcCsv.cpp */,
-				C9D4279C196EE768001E204D /* gvspcSensor.h */,
-				C9D4279D196EE768001E204D /* cppgvspc_gen_p2vm.cpp */,
-				C9D427A3196EE7CE001E204D /* Makefile */,
-				C9D4279E196EE768001E204D /* gvspcPix.h */,
 				C9D427A2196EE768001E204D /* gvspcErrorCode.h */,
+				C9D427A3196EE7CE001E204D /* Makefile */,
 			);
 			sourceTree = "<group>";
 		};

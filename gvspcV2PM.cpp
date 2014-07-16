@@ -57,7 +57,7 @@ int gvspcV2PM::set(const std::vector<gvspcPix>& phot,
 		l = i*n_ph+k;
 		for (j=0; j<2; j++)
 		{
-			M[l][t[j][i]-1] = phot[t[j][i]-1][l]/sum_phot[t[j][i]-1];
+			M[l][t[j][i]] = phot[t[j][i]][l]/sum_phot[t[j][i]];
 		}
 	}
 	
@@ -66,8 +66,8 @@ int gvspcV2PM::set(const std::vector<gvspcPix>& phot,
 		l = i*n_ph+k;
 		cos_ps_l = cosd(a[l]);
 		sin_ps_l = sind(a[l]);
-		vis_exp  = 2*sqrt(phot[t[0][i]-1][l]*phot[t[1][i]-1][l]);
-		vis_exp /= sum_phot[t[0][i]-1]+sum_phot[t[1][i]-1];
+		vis_exp  = 2*sqrt(phot[t[0][i]][l]*phot[t[1][i]][l]);
+		vis_exp /= sum_phot[t[0][i]]+sum_phot[t[1][i]];
 		M[l][n_tel+0*n_bl+i] =  vis_exp*cos_ps_l;
 		M[l][n_tel+1*n_bl+i] = -vis_exp*sin_ps_l;
 	}

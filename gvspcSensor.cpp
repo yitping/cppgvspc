@@ -26,10 +26,10 @@ int gvspcSensor::has_indices() { return indices_ready; }
 int gvspcSensor::has_ps() { return ps_ready; }
 int gvspcSensor::has_v2pms() { return v2pms_ready; }
 
-int gvspcSensor::num_baselines() { return n_bl; }
-int gvspcSensor::num_polstates() { return n_pl; }
-int gvspcSensor::num_telescopes() { return n_tel; }
-int gvspcSensor::num_scichannel() { return n_ch; }
+int gvspcSensor::num_baselines() const { return n_bl; }
+int gvspcSensor::num_polstates() const { return n_pl; }
+int gvspcSensor::num_telescopes() const { return n_tel; }
+int gvspcSensor::num_scichannel() const { return n_ch; }
 
 
 // TODO: change to gvspcCsv for csv read/write
@@ -271,7 +271,14 @@ int gvspcSensor::save_v2pms(const char *filename)
 	return GVSPC_ERROR_NONE;
 }
 
-const std::vector<double>& gvspcSensor::compute_fv(int p)
+int gvspcSensor::compute_opd(int p)
+{
+	compute_fv(p);
+	compute_gd();
+	return 0;
+}
+
+int gvspcSensor::compute_fv(int p)
 {
 	int i, j, t;
 	gvspcPix last = fifo_pix_flux.last() - mean_dark;
@@ -284,31 +291,33 @@ const std::vector<double>& gvspcSensor::compute_fv(int p)
 			flux[t] = (j == 0) ? coh[t] : (flux[t] + coh[t]);
 		for (i=0; i<n_bl; i++)
 		{
-			f = coh[tels[0][i]-1] + coh[tels[1][i]-1];
+			f = coh[tels[0][i]] + coh[tels[1][i]];
 			v_cos_pd[i][j] = coh[n_tel+0*n_bl+i]/f;
 			v_sin_pd[i][j] = coh[n_tel+1*n_bl+i]/f;
 		}
 	}
-	return flux;
+	return 0;
 }
 
-const std::vector<double>& gvspcSensor::compute_gd()
+int gvspcSensor::compute_gd()
 {
 	int i, j;
-	std::vector<double> re_dd(n_bl,0), im_dd(n_bl,0);
+	std::complex<double> d, sum;
+	std::vector<std::complex<double> > dd(n_bl);
 	for (i=0; i<n_bl; i++)
 	{
 		for (j=0; j<(n_ch-1); j++)
 		{
-			re_dd[i] +=  v_cos_pd[i][j]*v_cos_pd[i][j+1] + v_sin_pd[i][j]*v_sin_pd[i][j+1];
-			im_dd[i] += -v_cos_pd[i][j]*v_sin_pd[i][j+1] + v_sin_pd[i][j]*v_cos_pd[i][j+1];
+			d  = std::complex<double>(v_cos_pd[i][j],    v_sin_pd[i][j]);
+			d *= std::complex<double>(v_cos_pd[i][j+1], -v_sin_pd[i][j+1]);
+			sum = (j == 0) ? d : sum+d;
 		}
-		gd[i] = atan2(im_dd[i], re_dd[i])*(n_ch-1);
+		gd[i] = arg(sum)*(n_ch-1);
 	}
-	return gd;
+	return 0;
 }
 
-const std::vector<double>& gvspcSensor::compute_opl()
+int gvspcSensor::compute_opl()
 {
 	int i, j;
 	double aij;
@@ -320,27 +329,48 @@ const std::vector<double>& gvspcSensor::compute_opl()
 		opd2opl.setb(i, gd[i]);
 		for (j=0; j<n_tel; j++)
 		{
-			aij = (j == tels[0][i]-1) ? sign[i]*1 : ((j == tels[1][i]-1) ? -sign[i]*1 : 0);
+			aij = (j == tels[0][i]) ? bl_sign[i]*1 : ((j == tels[1][i]) ? -bl_sign[i]*1 : 0);
 			opd2opl.setA(i, j, aij);
 		}
 	}
 	
 	opl = opd2opl.solve();
 	
-	return opl;
+	return 0;
 }
 
-int gvspcSensor::get_tel(int i, int t) { return tels[t][i]; }
-double gvspcSensor::get_flux(int t) { return flux[t]; }
-double gvspcSensor::get_opl(int t) { return opl[t]; }
-double gvspcSensor::get_gd(int i) { return gd[i]; }
-double gvspcSensor::get_pd(int i, int j)
+int gvspcSensor::get_tel(int i, int t) const { return tels[t][bl_arr[i]]+1; }
+double gvspcSensor::get_flux(int t) const { return flux[t]; }
+double gvspcSensor::get_opl(int t) const { return opl[t]; }
+double gvspcSensor::get_gd(int i) const
 {
-	return atan2(v_sin_pd[i][j], v_cos_pd[i][j]);
+	return bl_sign[bl_arr[i]]*gd[bl_arr[i]];
 }
-double gvspcSensor::get_v2(int i, int j)
+double gvspcSensor::get_pd(int i, int j) const
 {
-	return v_cos_pd[i][j]*v_cos_pd[i][j] + v_sin_pd[i][j]*v_sin_pd[i][j];
+	return atan2(bl_sign[bl_arr[i]]*v_sin_pd[bl_arr[i]][j], v_cos_pd[bl_arr[i]][j]);
+}
+double gvspcSensor::get_v2(int i, int j) const
+{
+	return v_cos_pd[bl_arr[i]][j]*v_cos_pd[bl_arr[i]][j] + v_sin_pd[bl_arr[i]][j]*v_sin_pd[bl_arr[i]][j];
+}
+double gvspcSensor::get_cp(int c, int j) const
+{
+	int i, ii;
+	double s;
+	std::complex<double> cp;
+	for (i=0; i<3; i++)
+	{
+		// ctri refers to the conventional baseline arrangment
+		ii = (ctri[i][c] < 0) ? bl_arr[-ctri[i][c]] : bl_arr[ctri[i][c]];
+		s  = (ctri[i][c] < 0) ? -1.0 : 1.0;
+		s *= bl_sign[ii];
+		cp = (i == 0) ?
+			 std::complex<double>(v_cos_pd[ii][j], s*v_sin_pd[ii][j]) :
+		cp*std::complex<double>(v_cos_pd[ii][j], s*v_sin_pd[ii][j]);
+	}
+	
+	return std::arg(cp);
 }
 
 
@@ -358,16 +388,38 @@ void gvspcSensor::init()
 	ps_ready = false;
 	v2pms_ready = false;
 	
-	int ti[] = {3, 1, 1, 2, 2, 1};
-	int tj[] = {4, 4, 3, 4, 3, 2};
-	int tlsign[] = {1, 1,-1, 1, 1,-1};
-	tels[0].assign(std::begin(ti), std::end(ti));
-	tels[1].assign(std::begin(tj), std::end(tj));
-	sign.assign(std::begin(tlsign), std::end(tlsign));
-	
 	fifo_pix_flux.limit(5);
 	fifo_pix_dark.limit(5);
 	mean_phot.resize(n_tel);
+	
+	// Initializations below are suitable for a child class
+	// e.g. gvspcSCISensor, gvspcFTSensor, etc.
+	
+	// index to telescopes (conventional arrangment, i.e. 1, 2, ...)
+	// that form baselines
+	int ti[] = {2, 0, 0, 1, 1, 0};
+	int tj[] = {3, 3, 2, 3, 2, 1};
+	tels[0].assign(std::begin(ti), std::end(ti));
+	tels[1].assign(std::begin(tj), std::end(tj));
+	
+	int blsign[] = {1, 1,-1, 1, 1,-1};
+	bl_sign.assign(std::begin(blsign), std::end(blsign));
+	
+	// this maps the internal baseline arrangment to the
+	// conventional arrangment, i.e. 1-2, 1-3, 1-4, ...
+	// this should only be use when returning baseline related
+	// variables to an external calling function
+	int blarr[] = {5, 2, 1, 4, 3, 0};
+	bl_arr.assign(std::begin(blarr), std::end(blarr));
+	
+	// index to baselines (conventional arrangement) that form
+	// closed triangles
+	int bli[] = { 0, 0, 3, 1};
+	int blj[] = {-1,-2,-4,-2};
+	int blk[] = { 3, 4, 5, 5};
+	ctri[0].assign(std::begin(bli), std::end(bli));
+	ctri[1].assign(std::begin(blj), std::end(blj));
+	ctri[2].assign(std::begin(blk), std::end(blk));
 	
 }
 
@@ -387,4 +439,5 @@ void gvspcSensor::reinit()
 	gd.resize(n_bl);
 	opl.resize(n_tel);
 }
+
 

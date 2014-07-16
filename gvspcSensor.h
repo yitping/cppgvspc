@@ -1,6 +1,7 @@
 #ifndef GVSPCSENSOR_H
 #define GVSPCSENSOR_H
 
+#include <complex>
 #include "gvspcPix.h"
 #include "gvspcFifo.h"
 #include "gvspcV2PM.h"
@@ -16,7 +17,9 @@ class gvspcSensor
 	
 	int n_ch, n_pl;
 	std::vector<int> tels[2];
-	std::vector<int> sign;
+	std::vector<int> bl_sign;
+	std::vector<int> bl_arr;
+	std::vector<int> ctri[3];
 	std::vector<int> pixel_index;
 	int corner_ch, corner_io;
 	double bw;
@@ -32,6 +35,7 @@ class gvspcSensor
 	gvspcPix var_dark;
 	std::vector<gvspcV2PM> v2pms;
 	std::vector<double> flux;
+	// row x col = baseline x spec. channels
 	std::vector<std::vector<double> > v_cos_pd;
 	std::vector<std::vector<double> > v_sin_pd;
 	std::vector<double> gd;
@@ -44,7 +48,7 @@ class gvspcSensor
 public:
 	gvspcSensor();
 	~gvspcSensor();
-
+	
 	// checks
 	int has_indices();
 	int has_ps();
@@ -52,19 +56,19 @@ public:
 
 	// for regular analysis
 	int process_image(cpl_image *img, int type);
-	const std::vector<double>& compute_fv(int p);
-	const std::vector<double>& compute_gd();
-	const std::vector<double>& compute_opl();
-	double get_flux(int t);
-	double get_opl(int t);
-	double get_gd(int i);
-	double get_pd(int i, int j);
-	double get_v2(int i, int j);
-	int num_baselines();
-	int num_polstates();
-	int num_telescopes();
-	int num_scichannel();
-	int get_tel(int i, int t);
+	int compute_opd(int p);
+	int compute_opl();
+	double get_flux(int t) const;
+	double get_opl(int t) const;
+	double get_gd(int i) const;
+	double get_pd(int i, int j) const;
+	double get_v2(int i, int j) const;
+	double get_cp(int c, int j) const;
+	int num_baselines() const;
+	int num_polstates() const;
+	int num_telescopes() const;
+	int num_scichannel() const;
+	int get_tel(int i, int t) const;
 	
 	// for calibration only
 	int load_pixel_indices(char *csv);
@@ -80,6 +84,9 @@ public:
 private:
 	void init();
 	void reinit();
+	int compute_fv(int p);
+	int compute_gd();
+	void complex_prod(double a[], double b[]);
 
 };
 
