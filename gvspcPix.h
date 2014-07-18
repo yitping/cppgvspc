@@ -39,11 +39,13 @@ public:
 	gvspcPix operator*(const gvspcPix& B) const;
 	gvspcPix operator/(double b) const;
 	gvspcPix operator/(const gvspcPix& B) const;
+	gvspcPix& operator+=(double b);
+	gvspcPix& operator+=(const gvspcPix& B);
 	gvspcPix& operator*=(double b);
 	gvspcPix& operator*=(const gvspcPix& B);
 	gvspcPix& operator/=(double b);
 	gvspcPix& operator/=(const gvspcPix& B);
-
+	
 	// get essential array size
 	int isNull() const;
 	int num_ph() const;
@@ -55,6 +57,7 @@ public:
 	// set the value of each pixel
 	int set(cpl_image *img, int *idx, int cnr_ch, int cnr_io);
 	int set(double val, int k, int i, int j, int p);
+	gvspcPix abs();
 
 	// get the value of each pixel
 	double get(int k, int i, int j, int p);

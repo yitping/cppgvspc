@@ -93,6 +93,14 @@ int gvspcPix::set(double val, int k, int i, int j, int p)
 	return 0;
 }
 
+gvspcPix gvspcPix::abs()
+{
+	gvspcPix abs_this = *this;
+	for (int l=0; l<abs_this.v.size(); l++) if (abs_this.v[l] < 0) abs_this.v[l] = -abs_this.v[l];
+	for (int l=0; l<abs_this.y.size(); l++) if (abs_this.y[l] < 0) abs_this.y[l] = -abs_this.y[l];
+	return abs_this;
+}
+
 double gvspcPix::get(int k, int i, int j, int p)
 {
 	return v[convert_4D_indices(k,i,j,p)];
@@ -173,6 +181,25 @@ gvspcPix gvspcPix::operator*(const gvspcPix& B) const
 		for (long i=0; i<y.size(); i++) C.y[i] = y[i] * B.y[i];
 	}
 	return C;
+}
+
+gvspcPix& gvspcPix::operator+=(double b)
+{
+	for (long i=0; i<v.size(); i++) v[i] += b;
+	for (long i=0; i<y.size(); i++) y[i] += b;
+	return *this;
+}
+
+gvspcPix& gvspcPix::operator+=(const gvspcPix& B)
+{
+	if ((n_ch != B.n_ch) || (n_pl != B.n_pl))
+		std::cerr << "size mismatch" << std::endl;
+	else
+	{
+		for (long i=0; i<v.size(); i++) v[i] += B.v[i];
+		for (long i=0; i<y.size(); i++) y[i] += B.y[i];
+	}
+	return *this;
 }
 
 gvspcPix& gvspcPix::operator*=(double b)

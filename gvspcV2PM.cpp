@@ -82,7 +82,7 @@ int gvspcV2PM::set(const std::vector<std::vector<double> >& BM)
 	return 0;
 }
 
-const std::vector<std::vector<double> >& gvspcV2PM::get() const
+const std::vector<std::vector<double> >& gvspcV2PM::data() const
 {
 	return M;
 }
@@ -96,19 +96,33 @@ gvspcV2PM& gvspcV2PM::operator=(const gvspcV2PM& B)
 int gvspcV2PM::nrow() { return M.size(); }
 int gvspcV2PM::ncol() { return M[0].size(); }
 
-const std::vector<double>& gvspcV2PM::solve(const std::vector<double>& pix)
-{
-	if (pix.size() != M.size())
-	{
-		std::cerr << "pixel and V2PM sizes mismatch" << std::endl;
-		return vis;
-	}
-	
-	gvspcLS p2vm(M, pix);
-	vis = p2vm.solve();
-	
-	return vis;
-}
+//const std::vector<double>& gvspcV2PM::solve(const std::vector<double>& pix)
+//{
+//	std::vector<double> var;
+//	return solve(pix, var);
+//}
+//
+//const std::vector<double>& gvspcV2PM::solve(const std::vector<double>& pix, const std::vector<double>& var)
+//{
+//	if (pix.size() != M.size())
+//	{
+//		std::cerr << "pixels and V2PM sizes mismatch" << std::endl;
+//		return vis;
+//	}
+//	if (!var.empty() && (var.size() != pix.size()))
+//	{
+//		std::cerr << "pixels and V2PM sizes mismatch" << std::endl;
+//		return vis;
+//	}
+//	
+//	gvspcLS p2vm(M, pix, var);
+//	vis = p2vm.solve();
+//	var_vis = p2vm.get_var();
+//	
+//	return vis;
+//}
+//
+//const std::vector<double>& gvspcV2PM::get_var() { return var_vis; }
 
 
 ///// private /////

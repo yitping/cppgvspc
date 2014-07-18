@@ -32,7 +32,6 @@ int gvspcSensor::num_telescopes() const { return n_tel; }
 int gvspcSensor::num_scichannel() const { return n_ch; }
 
 
-// TODO: change to gvspcCsv for csv read/write
 int gvspcSensor::load_pixel_indices(char *filename)
 {
   int csv_n_ch, csv_n_sl, csv_n_pl, csv_corner_ch, csv_corner_io;
@@ -134,8 +133,7 @@ int gvspcSensor::process_image(cpl_image *image, int type)
 			break;
 		case 1:
 		default:
-			// TODO: let minus away dark here
-			fifo_pix_flux.add(new_pix);//-mean_dark
+			fifo_pix_flux.add(new_pix-mean_dark);
 			cpl_msg_debug(cpl_func, "adding instantaneous flux into fifo..");
 	}
 	
@@ -156,7 +154,7 @@ int gvspcSensor::save_dark()
 int gvspcSensor::save_phot(int tel)
 {
 	if (fifo_pix_flux.size() <= 2) return GVSPC_ERROR_INPUT_BAD;
-	mean_phot[tel-1] = fifo_pix_flux.mean()-mean_dark;
+	mean_phot[tel-1] = fifo_pix_flux.mean();//-mean_dark;
 	fifo_pix_flux.clear();
 	return GVSPC_ERROR_NONE;
 }
@@ -266,34 +264,67 @@ int gvspcSensor::save_v2pms(const char *filename)
 	{
 		l = p*n_ch + j;
 		label = "v2pm" + std::to_string(j) + "_p" + std::to_string(p);
-		csv.write(label.c_str(), v2pms[l].get());
+		csv.write(label.c_str(), v2pms[l].data());
 	}
 	return GVSPC_ERROR_NONE;
 }
 
-int gvspcSensor::compute_opd(int p)
+int gvspcSensor::compute_opd(int p, int novar)
 {
-	compute_fv(p);
+	compute_fv(p, novar);
 	compute_gd();
 	return 0;
 }
 
-int gvspcSensor::compute_fv(int p)
+int gvspcSensor::compute_fv(int p, int novar)
 {
 	int i, j, t;
-	gvspcPix last = fifo_pix_flux.last() - mean_dark;
+	gvspcPix last = fifo_pix_flux.last();
+	
 	std::vector<double> coh;
-	double f;
+	std::vector<double> var_coh;
+	double x, y, f, e_v, e_f;
+	
 	for (j=0; j<n_ch; j++)
 	{
-		coh = v2pms[p*n_ch+j].solve(last.data(j,p));
+		if (novar == 0)
+		{
+			gvspcPix var  =  last.abs() + var_dark;
+//			if (fifo_pix_flux.size() > 2) var += fifo_pix_flux.var();
+//			if (fifo_pix_flux.size() > 2) var += last;
+			gvspcLS p2vm(v2pms[p*n_ch+j].data(), last.data(j,p), var.data(j,p));
+//			p2vm.info();
+			coh = p2vm.solve();
+			var_coh = p2vm.get_var();
+		}
+		else
+		{
+			gvspcLS p2vm(v2pms[p*n_ch+j].data(), last.data(j,p));
+			coh = p2vm.solve();
+			var_coh = p2vm.get_var();
+		}
 		for (t=0; t<n_tel; t++)
+		{
 			flux[t] = (j == 0) ? coh[t] : (flux[t] + coh[t]);
+			var_flux[t] = (j == 0) ? var_coh[t] : (var_flux[t] + var_coh[t]);
+		}
 		for (i=0; i<n_bl; i++)
 		{
 			f = coh[tels[0][i]] + coh[tels[1][i]];
-			v_cos_pd[i][j] = coh[n_tel+0*n_bl+i]/f;
-			v_sin_pd[i][j] = coh[n_tel+1*n_bl+i]/f;
+			x = coh[n_tel+0*n_bl+i];
+			y = coh[n_tel+1*n_bl+i];
+			v_cos_pd[i][j] = x/f;
+			v_sin_pd[i][j] = y/f;
+			e_f  = var_coh[tels[0][i]] + var_coh[tels[1][i]];
+			e_f /= f*f;
+			e_v  = var_coh[n_tel+0*n_bl+i];
+			e_v /= x*x;
+			var_v_cos_pd[i][j]  = v_cos_pd[i][j]*v_cos_pd[i][j];
+			var_v_cos_pd[i][j] *= e_v + e_f;
+			e_v  = var_coh[n_tel+1*n_bl+i];
+			e_v /= y*y;
+			var_v_sin_pd[i][j]  = v_sin_pd[i][j]*v_sin_pd[i][j];
+			var_v_sin_pd[i][j] *= e_v + e_f;
 		}
 	}
 	return 0;
@@ -302,17 +333,29 @@ int gvspcSensor::compute_fv(int p)
 int gvspcSensor::compute_gd()
 {
 	int i, j;
-	std::complex<double> d, sum;
-	std::vector<std::complex<double> > dd(n_bl);
+	std::complex<double> d, m;
+	std::vector<std::complex<double> > dd(n_ch-1);
+	double e, s;
 	for (i=0; i<n_bl; i++)
 	{
+		// compute average of phasor difference
 		for (j=0; j<(n_ch-1); j++)
 		{
 			d  = std::complex<double>(v_cos_pd[i][j],    v_sin_pd[i][j]);
 			d *= std::complex<double>(v_cos_pd[i][j+1], -v_sin_pd[i][j+1]);
-			sum = (j == 0) ? d : sum+d;
+			m  = (j == 0) ? d : m+d;
+			dd[j] = d;
 		}
-		gd[i] = arg(sum)*(n_ch-1);
+		gd[i] = arg(m)*(n_ch-1);
+		// compute the deviation of
+		m = conj(m);
+		for (j=0; j<(n_ch-1); j++)
+		{
+			e  = arg(dd[j]*m);
+			e *= e;
+			s  = (j == 0) ? e : s+e;
+		}
+		var_gd[i] = s*(n_ch-1)/(n_ch-2);
 	}
 	return 0;
 }
@@ -373,6 +416,26 @@ double gvspcSensor::get_cp(int c, int j) const
 	return std::arg(cp);
 }
 
+double gvspcSensor::get_var_flux(int t) const { return var_flux[t]; }
+double gvspcSensor::get_var_gd(int i) const { return var_gd[bl_arr[i]]; }
+double gvspcSensor::get_var_pd(int i, int j) const
+{
+	double x = v_cos_pd[bl_arr[i]][j];
+	double y = v_sin_pd[bl_arr[i]][j];
+	double e;
+	e  = x*x*var_v_cos_pd[bl_arr[i]][j];
+	e += y*y*var_v_sin_pd[bl_arr[i]][j];
+	e *= (x*x + y*y)*(x*x + y*y);
+	return e;
+}
+double gvspcSensor::get_var_v2(int i, int j) const
+{
+	double e;
+	e  = 4*v_cos_pd[bl_arr[i]][j]*v_cos_pd[bl_arr[i]][j]*var_v_cos_pd[bl_arr[i]][j];
+	e += 4*v_sin_pd[bl_arr[i]][j]*v_sin_pd[bl_arr[i]][j]*var_v_sin_pd[bl_arr[i]][j];
+	return e;
+}
+
 
 ///// private /////
 
@@ -428,15 +491,15 @@ void gvspcSensor::reinit()
 	mean_dark.resize(n_ch, n_pl);
 	var_dark.resize(n_ch, n_pl);
 	v2pms.resize(n_ch*n_pl);
-	flux.resize(n_tel);
-	v_cos_pd.resize(n_bl);
-	v_sin_pd.resize(n_bl);
+	flux.resize(n_tel); var_flux.resize(n_tel);
+	v_cos_pd.resize(n_bl); var_v_cos_pd.resize(n_bl);
+	v_sin_pd.resize(n_bl); var_v_sin_pd.resize(n_bl);
 	for (int i=0; i<n_bl; i++)
 	{
-		v_cos_pd[i].resize(n_ch);
-		v_sin_pd[i].resize(n_ch);
+		v_cos_pd[i].resize(n_ch); var_v_cos_pd[i].resize(n_ch);
+		v_sin_pd[i].resize(n_ch); var_v_sin_pd[i].resize(n_ch);
 	}
-	gd.resize(n_bl);
+	gd.resize(n_bl); var_gd.resize(n_bl);
 	opl.resize(n_tel);
 }
 

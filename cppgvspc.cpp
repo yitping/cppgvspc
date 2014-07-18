@@ -144,13 +144,21 @@ int main(int argc, char **argv)
 				for (i=0; i<sensor.num_baselines(); i++)
 					fout << std::setw(12-3) << "gd[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
 				for (i=0; i<sensor.num_baselines(); i++)
+					fout << std::setw(12-3) << "e_gd[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
+				for (i=0; i<sensor.num_baselines(); i++)
 					fout << std::setw(12-3) << "v2[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
 				for (i=0; i<sensor.num_baselines(); i++)
+					fout << std::setw(12-3) << "e_v2[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
+				for (i=0; i<sensor.num_baselines(); i++)
 					fout << std::setw(12-3) << "pd[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
+				for (i=0; i<sensor.num_baselines(); i++)
+					fout << std::setw(12-3) << "e_pd[" << sensor.get_tel(i,0) << sensor.get_tel(i,1) << "]";
 				for (i=0; i<3; i++)
 					fout << std::setw(12-2) << "cp[" << i << "]";
 				for (t=0; t<sensor.num_telescopes(); t++)
 					fout << std::setw(12-2) << "flux[" << t << "]";
+				for (t=0; t<sensor.num_telescopes(); t++)
+					fout << std::setw(12-2) << "e_flux[" << t << "]";
 				fout << std::endl;
 			}
 			
@@ -182,13 +190,21 @@ int main(int argc, char **argv)
 						for (i=0; i<sensor.num_baselines(); i++)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_gd(i);
 						for (i=0; i<sensor.num_baselines(); i++)
+							fout << std::setprecision(5) << std::setw(12) << sqrt(sensor.get_var_gd(i));
+						for (i=0; i<sensor.num_baselines(); i++)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_v2(i, sensor.num_scichannel()/2);
 						for (i=0; i<sensor.num_baselines(); i++)
+							fout << std::setprecision(5) << std::setw(12) << sqrt(sensor.get_var_v2(i, sensor.num_scichannel()/2));
+						for (i=0; i<sensor.num_baselines(); i++)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_pd(i, sensor.num_scichannel()/2);
+						for (i=0; i<sensor.num_baselines(); i++)
+							fout << std::setprecision(5) << std::setw(12) << sqrt(sensor.get_var_pd(i, sensor.num_scichannel()/2));
 						for (i=0; i<3; i++)
 							fout << std::setprecision(5) << std::setw(12) << sensor.get_cp(i, sensor.num_scichannel()/2);
 						for (t=0; t<sensor.num_telescopes(); t++)
 							fout << std::setprecision(0) << std::setw(12) << sensor.get_flux(t);
+						for (t=0; t<sensor.num_telescopes(); t++)
+							fout << std::setprecision(0) << std::setw(12) << sqrt(sensor.get_var_flux(t));
 						fout << std::endl;
  					}
 				}

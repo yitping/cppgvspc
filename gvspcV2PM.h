@@ -22,6 +22,7 @@ class gvspcV2PM
 {
 	std::vector<std::vector<double> > M;
 	std::vector<double> vis;
+	std::vector<double> var_vis;
 	
 public:
 	gvspcV2PM();
@@ -39,15 +40,16 @@ public:
 					const std::vector<int> t[],
 					double a[]);
 	int set(const std::vector<std::vector<double> >& BM);
-	const std::vector<std::vector<double> >& get() const;
+	const std::vector<std::vector<double> >& data() const;
 	
 	gvspcV2PM& operator=(const gvspcV2PM& B);
 	
 	int nrow();
 	int ncol();
 	
-	const std::vector<double>& solve(const std::vector<double>& pix);
-	const std::vector<double>& solve(const std::vector<double>& pix, const std::vector<double>& var);
+//	const std::vector<double>& solve(const std::vector<double>& pix);
+//	const std::vector<double>& solve(const std::vector<double>& pix, const std::vector<double>& var);
+//	const std::vector<double>& get_var();
 	
 private:
 	void init();
