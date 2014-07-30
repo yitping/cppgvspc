@@ -51,8 +51,6 @@ public:
 	
 	void info();
 	
-	int debugme(const char *name);
-	
 private:
 	void init();
 	int read(const char *label);

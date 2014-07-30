@@ -113,6 +113,49 @@ int gvspcSensor::load_pixel_indices(char *filename)
 }
 
 
+int gvspcSensor::load_ps(char *filename)
+{
+	if (!indices_ready)
+	{
+		cpl_msg_error(cpl_func, "indices not ready");
+		return GVSPC_ERROR_INPUT_BAD;
+	}
+	
+	std::vector<std::vector<double> > psl;
+	int j, l, p, n_var;
+	
+	gvspcCsv csv(filename);
+	
+	if (!csv.has_linked_file())
+	{
+		std::cerr << "ps file not loaded" << std::endl;
+		return GVSPC_ERROR_FILE_IO;
+	}
+	if ((n_var = csv.has_variables()) == 0)
+	{
+		std::cerr << "ps file has no data" << std::endl;
+		return GVSPC_ERROR_INPUT_BAD;
+	}
+	if (n_var != n_ch*n_pl)
+	{
+		std::cerr << "number of pses in file mismatched" << std::endl;
+		return GVSPC_ERROR_INPUT_BAD;
+	}
+	std::cout << "loading ps" << std::endl;
+	
+	ps.resize(n_ch*n_pl);
+	for (p=0; p<n_pl; p++) for (j=0; j<n_ch; j++)
+	{
+		l = p*n_ch + j;
+		csv.read_as_dbl(l, psl);
+		ps[l] = psl[0];
+	}
+	ps_ready = true;
+	
+	return GVSPC_ERROR_NONE;
+}
+
+
 int gvspcSensor::process_image(cpl_image *image, int type)
 {
 	if (image == NULL) return GVSPC_ERROR_INPUT_BAD;
@@ -160,33 +203,15 @@ int gvspcSensor::save_phot(int tel)
 }
 
 
-int gvspcSensor::set_default_ps()
-{
-	double default_ps[] = {0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270};
-	ps.assign(std::begin(default_ps), std::end(default_ps));
-	cpl_msg_info(cpl_func, "using %d default phase shifts", (int) ps.size());
-	ps_ready = true;
-	return GVSPC_ERROR_NONE;
-}
-
-int gvspcSensor::set_ps(const std::vector<double>& ps)
-{
-	if (ps.size() == n_ph*n_bl) this->ps = ps;
-	else
-	{
-		cpl_msg_info(cpl_func, "warning: phase shifts length mismatched");
-		set_default_ps();
-	}
-	ps_ready = true;
-	return GVSPC_ERROR_NONE;
-}
-
-
 int gvspcSensor::compute_v2pms()
 {
 	std::vector<double> sum(n_tel);
 	std::vector<gvspcPix> subpix(n_tel);
+	double default_ps[] = {0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270, 0, 90, 180, 270};
 	int t, p, j, l;
+	
+	if (!ps_ready)
+		cpl_msg_info(cpl_func, "using %d default phase shifts", (int) ps.size());
 	
 	for (p=0; p<n_pl; p++)
 	{
@@ -196,9 +221,13 @@ int gvspcSensor::compute_v2pms()
 			l = p*n_ch + j;
 			// TODO: this is not efficient
 			for (t=0; t<n_tel; t++) subpix[t] = gvspcPix(mean_phot[t],j,p);
-			v2pms[l].set(subpix, sum.data(), tels, ps.data());
+			if (!ps_ready)
+				v2pms[l].set(subpix, sum.data(), tels, default_ps);
+			else
+				v2pms[l].set(subpix, sum.data(), tels, ps[l].data());
 		}
 	}
+	v2pms_ready = true;
 	
 	return GVSPC_ERROR_NONE;
 }
@@ -237,6 +266,7 @@ int gvspcSensor::load_v2pms(const char *filename)
 		csv.read_as_dbl(i, v2pm);
 		v2pms[i].set(v2pm);
 	}
+	v2pms_ready = true;
 	
 	return GVSPC_ERROR_NONE;
 }
@@ -436,6 +466,10 @@ double gvspcSensor::get_var_v2(int i, int j) const
 	return e;
 }
 
+const gvspcPix& gvspcSensor::get_last_pixel() const
+{
+	return fifo_pix_flux.last();
+}
 
 ///// private /////
 

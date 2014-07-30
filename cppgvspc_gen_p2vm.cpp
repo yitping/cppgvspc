@@ -8,30 +8,33 @@
 int main(int argc, char **argv)
 {
 	int retval=EXIT_SUCCESS, errflag=0, optflag[5]={0}, msgflag=0, opt, i;
-  char **files_dark, **files_tel1, **files_tel2, **files_tel3, **files_tel4,
-	*pfile, *file_index, *file_p2vm;
+  char **files_dark, **files_tel1, **files_tel2, **files_tel3, **files_tel4, *pfile, *file_index, *file_v2pm, *file_ps;
   int num_dark=0, num_tel1=0, num_tel2=0, num_tel3=0, num_tel4=0;
   cpl_image *image;
 	
   cpl_init(CPL_INIT_DEFAULT);
 	
-  file_p2vm  = NULL;
-  file_index = NULL;
+	file_index = NULL;
+	file_ps    = NULL;
+  file_v2pm  = NULL;
   files_dark = NULL;
   files_tel1 = NULL;
   files_tel2 = NULL;
   files_tel3 = NULL;
   files_tel4 = NULL;
 	
-  while ((opt = getopt(argc, argv, ":i:d:1:2:3:4:p:m")) != -1)
+  while ((opt = getopt(argc, argv, ":i:s:d:1:2:3:4:p:m")) != -1)
   {
 		switch (opt)
 		{
       case 'i':
 				file_index = optarg;
 				break;
+			case 's':
+				file_ps = optarg;
+				break;
       case 'p':
-				file_p2vm = optarg;
+				file_v2pm = optarg;
 				break;
       case 'm':
 				msgflag = 1;
@@ -104,13 +107,13 @@ int main(int argc, char **argv)
   }
   else
   {
-		if (file_p2vm == NULL) file_p2vm = (char *) "p2vm.csv";
+		if (file_v2pm == NULL) file_v2pm = (char *) "p2vm.csv";
     for (i=0; i<num_dark; i++) cpl_msg_info(cpl_func, "dark file: %s", files_dark[i]);
     for (i=0; i<num_tel1; i++) cpl_msg_info(cpl_func, "tel1 file: %s", files_tel1[i]);
     for (i=0; i<num_tel2; i++) cpl_msg_info(cpl_func, "tel2 file: %s", files_tel2[i]);
     for (i=0; i<num_tel3; i++) cpl_msg_info(cpl_func, "tel3 file: %s", files_tel3[i]);
     for (i=0; i<num_tel4; i++) cpl_msg_info(cpl_func, "tel4 file: %s", files_tel4[i]);
-    cpl_msg_info(cpl_func, "p2vm file: %s", file_p2vm);
+    cpl_msg_info(cpl_func, "p2vm file: %s", file_v2pm);
 		
 		// instantiate and init sensor
 		gvspcSensor sensor;
@@ -193,9 +196,9 @@ int main(int argc, char **argv)
 			}
 			sensor.save_phot(4);
 
-			sensor.set_default_ps();
+			if (file_ps != NULL) sensor.load_ps(file_ps);
 			sensor.compute_v2pms();
-			sensor.save_v2pms(file_p2vm);
+			sensor.save_v2pms(file_v2pm);
 			
 		}
 		

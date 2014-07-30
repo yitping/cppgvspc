@@ -113,7 +113,6 @@ int main(int argc, char **argv)
 		
 		if (sensor.has_indices())
 		{
-			sensor.set_default_ps();
 			sensor.load_v2pms(file_p2vm);
 			
 			cpl_msg_info(cpl_func, "reading dark fits...");

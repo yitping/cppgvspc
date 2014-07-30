@@ -47,7 +47,7 @@ class gvspcSensor
 	
 	// for calibration only
 	std::vector<gvspcPix> mean_phot;
-	std::vector<double> ps;
+	std::vector<std::vector<double> > ps;
 
 public:
 	gvspcSensor();
@@ -77,13 +77,13 @@ public:
 	int num_telescopes() const;
 	int num_scichannel() const;
 	int get_tel(int i, int t) const;
+	const gvspcPix& get_last_pixel() const;
 	
 	// for calibration only
-	int load_pixel_indices(char *csv);
+	int load_pixel_indices(char *filename);
+	int load_ps(char *filename);
 	int save_dark();
 	int save_phot(int tel);
-	int set_default_ps();
-	int set_ps(const std::vector<double>& ps);
 	int compute_v2pms();
 	int compute_pserr(); // TODO: tbd
 	int load_v2pms(const char *filename);

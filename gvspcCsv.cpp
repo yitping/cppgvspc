@@ -153,11 +153,6 @@ int gvspcCsv::write(const char *label, const std::vector<double>& data, int m, i
 	return 0;
 }
 
-int gvspcCsv::debugme(const char *fname)
-{
-	std::cout << "linenum " << fname << " = " << get_varnum(fname) << std::endl;
-	return 0;
-}
 
 ///// private /////
 
