@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 					cpl_msg_error(cpl_func, "file not found: %s\n", files_dark[i]);
 					continue;
 				}
-				extid = (cpl_fits_count_extensions(files_dark[i]) == 1) ? 0 :cpl_fits_find_extension(argv[optind], (char *) SCI_FITS_EXT);
+				extid = (cpl_fits_count_extensions(files_dark[i]) == 1) ? 0 :cpl_fits_find_extension(files_dark[i], (char *) SCI_FITS_EXT);
 				cpl_msg_info(cpl_func, "loading %s [%d]", files_dark[i], extid);
 				j = 0;
 				while (1)

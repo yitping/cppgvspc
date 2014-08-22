@@ -190,6 +190,7 @@ int gvspcSensor::save_dark()
 	mean_dark = fifo_pix_dark.mean();
 	var_dark  = fifo_pix_dark.var();
 	fifo_pix_dark.clear();
+	cpl_msg_debug(cpl_func, "done");
 	return GVSPC_ERROR_NONE;
 }
 
@@ -199,6 +200,7 @@ int gvspcSensor::save_phot(int tel)
 	if (fifo_pix_flux.size() <= 2) return GVSPC_ERROR_INPUT_BAD;
 	mean_phot[tel-1] = fifo_pix_flux.mean();//-mean_dark;
 	fifo_pix_flux.clear();
+	cpl_msg_debug(cpl_func, "done");
 	return GVSPC_ERROR_NONE;
 }
 
@@ -256,7 +258,7 @@ int gvspcSensor::load_v2pms(const char *filename)
 		return GVSPC_ERROR_INPUT_BAD;
 	}
 	
-	std::cout << "loading v2pms" << std::endl;
+	std::cout << "loading v2pms";
 	
 	if (v2pms.size() != n_var) v2pms.resize(n_var);
 	
@@ -265,7 +267,9 @@ int gvspcSensor::load_v2pms(const char *filename)
 	{
 		csv.read_as_dbl(i, v2pm);
 		v2pms[i].set(v2pm);
+		std::cout << ".";
 	}
+	std::cout << std::endl;
 	v2pms_ready = true;
 	
 	return GVSPC_ERROR_NONE;
@@ -485,8 +489,8 @@ void gvspcSensor::init()
 	ps_ready = false;
 	v2pms_ready = false;
 	
-	fifo_pix_flux.limit(5);
-	fifo_pix_dark.limit(5);
+	fifo_pix_flux.limit(30);
+	fifo_pix_dark.limit(30);
 	mean_phot.resize(n_tel);
 	
 	// Initializations below are suitable for a child class
